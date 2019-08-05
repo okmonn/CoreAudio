@@ -1,3 +1,6 @@
+#include "etc/WavFmt.h"
+#include "Function/Function.h"
+
 #include <string>
 #include <vector>
 #include <memory>
@@ -10,75 +13,22 @@
 #include <functiondiscoverykeys_devpkey.h>
 #include <Audioclient.h>
 
+#include <ks.h>
+#include <ksmedia.h>
+
 #pragma comment(lib, "Propsys.lib")
 
-namespace
-{
-	using prop_string_t = std::unique_ptr<WCHAR, decltype(&CoTaskMemFree)>;
-	#define prop_string_null prop_string_t(nullptr, CoTaskMemFree)
-
-	// デバイスID取得
-	prop_string_t GetDeviceID(IMMDevice* device)
-	{
-		LPWSTR buf = nullptr;
-		if (device->GetId(&buf) == S_OK)
-		{
-			return prop_string_t(buf, CoTaskMemFree);
-		}
-		return prop_string_null;
-	}
-
-	// デバイスステータス取得
-	std::wstring GetDeviceState(IMMDevice* device)
-	{
-		unsigned long state = 0;
-		if (device->GetState(&state) == S_OK)
-		{
-			switch (state)
-			{
-			case DEVICE_STATE_ACTIVE:
-				return L"ACTIVE";
-				break;
-			case DEVICE_STATE_DISABLED:
-				return L"DISABLED";
-				break;
-			case DEVICE_STATE_NOTPRESENT:
-				return L"NOTPRESENT";
-				break;
-			case DEVICE_STATE_UNPLUGGED:
-				return L"UNPLUGGED";
-				break;
-			default:
-				break;
-			}
-		}
-		return L"UNKNOWN";
-	}
-
-	// デバイスプロパティ取得
-	prop_string_t GetDeviceProp(IPropertyStore* prop, const PROPERTYKEY& key)
-	{
-		PROPVARIANT var{};
-		PropVariantInit(&var);
-		if (prop->GetValue(key, &var) == S_OK)
-		{
-			LPWSTR str = nullptr;
-			if (PropVariantToStringAlloc(var, &str) == S_OK)
-			{
-				PropVariantClear(&var);
-				return prop_string_t(str, CoTaskMemFree);
-			}
-		}
-		return prop_string_null;
-	}
-}
-
-std::string ChangeCode(const std::wstring& wstr)
-{
-	std::vector<char> buffer(WideCharToMultiByte(CP_OEMCP, 0, wstr.c_str(), -1, nullptr, 0, nullptr, nullptr));
-	WideCharToMultiByte(CP_OEMCP, 0, wstr.c_str(), -1, &buffer.front(), buffer.size(), nullptr, nullptr);
-	return std::string(buffer.begin(), buffer.end());
-}
+// スピーカ一覧
+const unsigned long spk[] = {
+	KSAUDIO_SPEAKER_MONO,
+	KSAUDIO_SPEAKER_STEREO,
+	KSAUDIO_SPEAKER_STEREO | SPEAKER_LOW_FREQUENCY,
+	KSAUDIO_SPEAKER_QUAD,
+	0,
+	KSAUDIO_SPEAKER_5POINT1,
+	0,
+	KSAUDIO_SPEAKER_7POINT1_SURROUND
+};
 
 int main(void)
 {
@@ -86,32 +36,24 @@ int main(void)
 
 	//エンドポイントデバイスの列挙
 	{
-		IMMDeviceEnumerator* enumerator = nullptr;
-		IMMDeviceCollection* collection = nullptr;
-		IMMDevice* device = nullptr;
-		IPropertyStore* prop = nullptr;
-		hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&enumerator));
-		hr = enumerator->EnumAudioEndpoints(EDataFlow::eRender, DEVICE_STATE_ACTIVE, &collection);
-		
-		unsigned int deviceMax = 0;
-		hr = collection->GetCount(&deviceMax);
-		for (unsigned int i = 0; i < deviceMax; ++i)
+		auto prop = okmonn::GetDeviceProp(okmonn::DeviceType::RENDER);
+		for (size_t i = 0; i < prop.size(); ++i)
 		{
-			hr = collection->Item(i, &device);
-			hr = device->OpenPropertyStore(STGM_READ, &prop);
-
-			std::cout << i                 << std::endl;
-			std::cout << "ID="             << ChangeCode(GetDeviceID(device).get()).c_str()<< std::endl;
-			std::cout << "STATE="          << ChangeCode(GetDeviceState(device)).c_str() << std::endl;
-			std::cout << "フルネーム="     << ChangeCode(GetDeviceProp(prop, PKEY_Device_FriendlyName).get()).c_str() << std::endl;
-			std::cout << "ショートネーム=" << ChangeCode(GetDeviceProp(prop, PKEY_Device_DeviceDesc).get()).c_str() << std::endl;
-			std::cout << "物理デバイス名=" << ChangeCode(GetDeviceProp(prop, PKEY_DeviceInterface_FriendlyName).get()).c_str() << std::endl;
+			std::cout << i << std::endl;
+			std::cout << prop[i].id << std::endl;
+			std::cout << prop[i].state << std::endl;
+			std::cout << prop[i].fullName << std::endl;
+			std::cout << prop[i].shortName << std::endl;
+			std::cout << prop[i].deviceName << std::endl;
 		}
+	}
 
-		prop->Release();
-		device->Release();
-		collection->Release();
-		enumerator->Release();
+	// ファイル読み込み
+	okmonn::Info info{};
+	std::shared_ptr<std::vector<unsigned char>>wave;
+	{
+		auto hr = wav::Load("SOS.wav", info, wave);
+		info.bit = 32;
 	}
 
 	// デフォルトエンドポイントデバイスセット
@@ -135,6 +77,20 @@ int main(void)
 		PropVariantInit(&var);
 		prop->GetValue(PKEY_AudioEngine_DeviceFormat, &var);
 		WAVEFORMATEXTENSIBLE* fmt = (WAVEFORMATEXTENSIBLE*)var.blob.pBlobData;
+		{
+			*fmt = {};
+			fmt->Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
+			fmt->Format.nSamplesPerSec = info.sample;
+			fmt->Format.wBitsPerSample = info.bit;
+			fmt->Format.nChannels = info.channel;
+			fmt->Format.nBlockAlign = fmt->Format.nChannels * fmt->Format.wBitsPerSample / 8;
+			fmt->Format.nAvgBytesPerSec = fmt->Format.nSamplesPerSec * fmt->Format.nBlockAlign;
+			fmt->Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
+
+			fmt->dwChannelMask = spk[fmt->Format.nChannels - 1];
+			fmt->Samples.wValidBitsPerSample = 24;
+			fmt->SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
+		}
 		hr = audio->IsFormatSupported(_AUDCLNT_SHAREMODE::AUDCLNT_SHAREMODE_EXCLUSIVE, (WAVEFORMATEX*)fmt, nullptr);
 		
 		//レイテンシ取得
@@ -184,20 +140,13 @@ int main(void)
 	// スレッドの準備
 	unsigned __int32 fream = 0;
 	hr = audio->GetBufferSize(&fream);
-	std::vector<float>a(fream * block / sizeof(float));
-	for (unsigned int i = 0; i < a.size(); i += block / sizeof(float))
-	{
-		for (unsigned int c = 0; c < block / sizeof(float); ++c)
-		{
-			a[i + c] = 2.0f * std::sin(2.0f * 3.14159265f * 440.0f * i / 48000);
-		}
-	}
 	void* threadEvent = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
 	void* wait[] = {
 		audioEvent,
 		threadEvent
 	};
 	std::thread th = std::thread([&]()->void {
+		unsigned long read = 0;
 		while (true)
 		{
 			auto hr = WaitForMultipleObjects(_countof(wait), wait, false, INFINITE);
@@ -210,8 +159,21 @@ int main(void)
 			hr = audio->GetBufferSize(&fream);
 			unsigned char* data = nullptr;
 			hr = render->GetBuffer(fream, &data);
-			memcpy(data, a.data(), sizeof(a[0])* a.size());
+
+			std::vector<int>tmp(fream* info.channel);
+			short* addr = (short*)&wave->at(read);
+			for (unsigned int i = 0; i < tmp.size(); ++i)
+			{
+				tmp[i] = addr[i] * 0xffff;
+			}
+			memcpy(data, &tmp.at(0), fream * block);
+
 			hr = render->ReleaseBuffer(fream, 0);
+			read += fream * 4;
+			if (read >= wave->size())
+			{
+				read = 0;
+			}
 		}
 	});
 
@@ -220,7 +182,7 @@ int main(void)
 		hr = audio->Start();
 	}
 
-	while (true)
+	while (!(GetKeyState(VK_ESCAPE) & 0x80))
 	{
 
 	}

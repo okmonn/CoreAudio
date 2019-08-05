@@ -13,10 +13,54 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="AudioEngin">
+      <UniqueIdentifier>{52250cb3-fe73-4091-bb80-b95dcd64a620}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Function">
+      <UniqueIdentifier>{2048d90e-f02e-40b4-86c7-39eabb0dcb25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager">
+      <UniqueIdentifier>{06cfe06c-cb21-46c6-8854-3f4d3d8e533d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="etc">
+      <UniqueIdentifier>{e0258208-b335-4be9-a428-25f25554bb78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="AudioEngin\AudioEngin.cpp">
+      <Filter>AudioEngin</Filter>
+    </ClCompile>
+    <ClCompile Include="Function\Function.cpp">
+      <Filter>Function</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\Manager.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AudioEngin\AudioEngin.h">
+      <Filter>AudioEngin</Filter>
+    </ClInclude>
+    <ClInclude Include="Function\Function.h">
+      <Filter>Function</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\Manager.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="etc\Unknown.h">
+      <Filter>etc</Filter>
+    </ClInclude>
+    <ClInclude Include="etc\Singleton.h">
+      <Filter>etc</Filter>
+    </ClInclude>
+    <ClInclude Include="etc\Info.h">
+      <Filter>etc</Filter>
+    </ClInclude>
+    <ClInclude Include="etc\WavFmt.h">
+      <Filter>etc</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
