@@ -14,5 +14,5 @@ namespace okmonn
 	std::vector<okmonn::DeviceProp>GetDeviceProp(const okmonn::DeviceType& type);
 
 	// オーディオエンジン生成
-	long CreateAudioEngin(const GUID& id, void** obj);
+	long CreateAudioEngin(const unsigned int& index, const okmonn::DeviceType& type, const GUID& id, void** obj);
 }

@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 
+// デフォルトデバイスインデックス
+#define DEFAULT_DEVICE 0xffffffff
+
 namespace okmonn
 {
 	// オーディオデバイスタイプ
@@ -8,6 +11,13 @@ namespace okmonn
 	{
 		RENDER,
 		CAPTURE,
+	};
+
+	// オーディオタイプ
+	enum class AudioType
+	{
+		SHARED,
+		EXCLUSIVE
 	};
 
 	// オーディオデバイス情報
@@ -35,15 +45,19 @@ namespace okmonn
 		unsigned char bit;
 		//チャンネル数
 		unsigned char channel;
+		//float型サポート
+		bool floating;
 
 		//コンストラクタ
 		Info() {
 			sample = bit = channel = 0;
+			floating = false;
 		}
-		Info(const unsigned short& s, const unsigned char& b, const unsigned char& c) {
-			sample  = s;
-			bit     = b;
-			channel = c;
+		Info(const unsigned short& s, const unsigned char& b, const unsigned char& c, const bool& f = false) {
+			sample   = s;
+			bit      = b;
+			channel  = c;
+			floating = f;
 		}
 		Info(const Info& info) {
 			(*this) = info;
@@ -51,9 +65,10 @@ namespace okmonn
 
 		// 代入演算子オーバーロード
 		void operator=(const Info& info) {
-			sample  = info.sample;
-			bit     = info.bit;
-			channel = info.channel;
+			sample   = info.sample;
+			bit      = info.bit;
+			channel  = info.channel;
+			floating = info.floating;
 		}
 	};
 }

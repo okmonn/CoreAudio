@@ -12,7 +12,7 @@ Manager::~Manager()
 }
 
 // オブジェクト生成
-long Manager::CreateObj(const GUID& id, void** obj)
+long Manager::CreateObj(const unsigned int& index, const okmonn::DeviceType& type, const GUID& id, void** obj)
 {
 	if (obj == nullptr)
 	{
@@ -22,7 +22,7 @@ long Manager::CreateObj(const GUID& id, void** obj)
 	*obj = nullptr;
 	if (id == __uuidof(AudioEngin))
 	{
-		*obj = new AudioEngin();
+		*obj = new AudioEngin(index, type);
 	}
 	else
 	{

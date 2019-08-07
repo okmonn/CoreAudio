@@ -1,34 +1,7 @@
-#include "etc/WavFmt.h"
+#include "AudioEngin/AudioEngin.h"
 #include "Function/Function.h"
-
-#include <string>
-#include <vector>
-#include <memory>
-#include <thread>
+#include <Windows.h>
 #include <iostream>
-
-#include <initguid.h>
-#include <mmdeviceapi.h>
-#include <propvarutil.h>
-#include <functiondiscoverykeys_devpkey.h>
-#include <Audioclient.h>
-
-#include <ks.h>
-#include <ksmedia.h>
-
-#pragma comment(lib, "Propsys.lib")
-
-// スピーカ一覧
-const unsigned long spk[] = {
-	KSAUDIO_SPEAKER_MONO,
-	KSAUDIO_SPEAKER_STEREO,
-	KSAUDIO_SPEAKER_STEREO | SPEAKER_LOW_FREQUENCY,
-	KSAUDIO_SPEAKER_QUAD,
-	0,
-	KSAUDIO_SPEAKER_5POINT1,
-	0,
-	KSAUDIO_SPEAKER_7POINT1_SURROUND
-};
 
 int main(void)
 {
@@ -48,16 +21,18 @@ int main(void)
 		}
 	}
 
-	// ファイル読み込み
-	okmonn::Info info{};
-	std::shared_ptr<std::vector<unsigned char>>wave;
+	Microsoft::WRL::ComPtr<AudioEngin>audio = nullptr;
+	okmonn::CreateAudioEngin(DEFAULT_DEVICE, okmonn::DeviceType::RENDER, IID_PPV_ARGS(&audio));
+	audio->Initialize(okmonn::AudioType::SHARED);
+	audio->Start();
+
+	while (true)
 	{
-		auto hr = wav::Load("SOS.wav", info, wave);
-		info.bit = 32;
+
 	}
 
 	// デフォルトエンドポイントデバイスセット
-	IMMDevice* device = nullptr;
+	/*IMMDevice* device = nullptr;
 	{
 		IMMDeviceEnumerator* enumerator = nullptr;
 		hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&enumerator));
@@ -88,7 +63,7 @@ int main(void)
 			fmt->Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
 
 			fmt->dwChannelMask = spk[fmt->Format.nChannels - 1];
-			fmt->Samples.wValidBitsPerSample = 24;
+			fmt->Samples.wValidBitsPerSample = 32;
 			fmt->SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
 		}
 		hr = audio->IsFormatSupported(_AUDCLNT_SHAREMODE::AUDCLNT_SHAREMODE_EXCLUSIVE, (WAVEFORMATEX*)fmt, nullptr);
@@ -193,7 +168,7 @@ int main(void)
 	CloseHandle(audioEvent);
 	render->Release();
 	audio->Release();
-	device->Release();
+	device->Release();*/
 
 	CoUninitialize();
 

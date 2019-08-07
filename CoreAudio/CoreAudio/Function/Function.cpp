@@ -98,7 +98,7 @@ std::vector<okmonn::DeviceProp> okmonn::GetDeviceProp(const okmonn::DeviceType& 
 }
 
 // オーディオエンジンの生成
-long okmonn::CreateAudioEngin(const GUID& id, void** obj)
+long okmonn::CreateAudioEngin(const unsigned int& index, const okmonn::DeviceType& type, const GUID& id, void** obj)
 {
-	return Manager::Get().CreateObj(id, obj);
+	return Manager::Get().CreateObj(index, type, id, obj);
 }

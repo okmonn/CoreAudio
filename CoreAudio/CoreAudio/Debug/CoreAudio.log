@@ -1,2 +1,3 @@
-﻿  Main.cpp
+﻿  AudioEngin.cpp
+C:\Users\1601271\Documents\GitHub\CoreAudio\CoreAudio\CoreAudio\AudioEngin\AudioEngin.cpp(260,12): warning C4018:  '>=': signed と unsigned の数値を比較しようとしました。
   CoreAudio.vcxproj -> C:\Users\1601271\Documents\GitHub\CoreAudio\CoreAudio\Debug\CoreAudio.exe
