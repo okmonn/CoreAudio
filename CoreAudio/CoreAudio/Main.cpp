@@ -1,176 +1,128 @@
-#include "AudioEngin/AudioEngin.h"
-#include "Function/Function.h"
-#include <Windows.h>
+#include <cmath>
+#include <vector>
 #include <iostream>
 
-int main(void)
+// カイザー窓
+double Kaizer(const unsigned short& siderope)
 {
-	auto hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-
-	//エンドポイントデバイスの列挙
+	if (siderope > 21 && siderope < 50)
 	{
-		auto prop = okmonn::GetDeviceProp(okmonn::DeviceType::RENDER);
-		for (size_t i = 0; i < prop.size(); ++i)
-		{
-			std::cout << i << std::endl;
-			std::cout << prop[i].id << std::endl;
-			std::cout << prop[i].state << std::endl;
-			std::cout << prop[i].fullName << std::endl;
-			std::cout << prop[i].shortName << std::endl;
-			std::cout << prop[i].deviceName << std::endl;
-		}
+		return (0.5842 * std::pow(double(siderope - 21), 0.4)) + (0.07886 * double(siderope - 21));
+	}
+	else if (siderope >= 50)
+	{
+		return 0.1102 * (double(siderope) - 8.7);
 	}
 
-	Microsoft::WRL::ComPtr<AudioEngin>audio = nullptr;
-	okmonn::CreateAudioEngin(DEFAULT_DEVICE, okmonn::DeviceType::RENDER, IID_PPV_ARGS(&audio));
-	audio->Initialize(okmonn::AudioType::SHARED);
-	audio->Start();
+	return 0.0;
+}
 
-	while (true)
+// 階乗
+unsigned int Factorial(const unsigned int& n)
+{
+	unsigned int tmp = 1;
+	for (unsigned int i = 1; i <= n; ++i)
 	{
-
+		tmp *= i;
 	}
 
-	// デフォルトエンドポイントデバイスセット
-	/*IMMDevice* device = nullptr;
+	return tmp;
+}
+
+// 第１種変形ベッセル関数
+double Vessel(const double& val)
+{
+	double tmp = 1.0;
+	for (unsigned int i = 1; i <= 20; ++i)
 	{
-		IMMDeviceEnumerator* enumerator = nullptr;
-		hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&enumerator));
-		enumerator->GetDefaultAudioEndpoint(EDataFlow::eRender, ERole::eConsole, &device);
+		tmp += std::pow(std::pow(val / 2.0, i) / double(Factorial(i)), 2.0);
 	}
 
-	// オーディオクライアントの準備
-	IAudioClient* audio = nullptr;
-	unsigned int block = 0;
+	return tmp;
+}
+
+// 窓関数
+double WinFunc(const unsigned int& n, const unsigned short& siderope, const unsigned short& degree)
+{
+	const double M = double(degree) / 2.0;
+	return Vessel(Kaizer(siderope) * std::sqrt(1.0 - std::pow(double(n) / M, 2.0))) / Vessel(Kaizer(siderope));
+}
+
+// 標本化関数
+double Sinc(const unsigned int& n, const unsigned short& siderope, const unsigned short& degree, const unsigned int& cutoff, const unsigned int& sample)
+{
+	const double PI = 3.14159265;
+	if (n != 0)
 	{
-		hr = device->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, nullptr, (void**)& audio);
-
-		//フォーマットのチェック
-		IPropertyStore* prop = nullptr;
-		hr = device->OpenPropertyStore(STGM_READ, &prop);
-		PROPVARIANT var{};
-		PropVariantInit(&var);
-		prop->GetValue(PKEY_AudioEngine_DeviceFormat, &var);
-		WAVEFORMATEXTENSIBLE* fmt = (WAVEFORMATEXTENSIBLE*)var.blob.pBlobData;
-		{
-			*fmt = {};
-			fmt->Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
-			fmt->Format.nSamplesPerSec = info.sample;
-			fmt->Format.wBitsPerSample = info.bit;
-			fmt->Format.nChannels = info.channel;
-			fmt->Format.nBlockAlign = fmt->Format.nChannels * fmt->Format.wBitsPerSample / 8;
-			fmt->Format.nAvgBytesPerSec = fmt->Format.nSamplesPerSec * fmt->Format.nBlockAlign;
-			fmt->Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
-
-			fmt->dwChannelMask = spk[fmt->Format.nChannels - 1];
-			fmt->Samples.wValidBitsPerSample = 32;
-			fmt->SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
-		}
-		hr = audio->IsFormatSupported(_AUDCLNT_SHAREMODE::AUDCLNT_SHAREMODE_EXCLUSIVE, (WAVEFORMATEX*)fmt, nullptr);
-		
-		//レイテンシ取得
-		REFERENCE_TIME defPeriod = 0;
-		REFERENCE_TIME minPeriod = 0;
-		hr = audio->GetDevicePeriod(&defPeriod, &minPeriod);
-
-		//初期化
-		hr = audio->Initialize(_AUDCLNT_SHAREMODE::AUDCLNT_SHAREMODE_EXCLUSIVE, AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST,
-			defPeriod, defPeriod, (WAVEFORMATEX*)fmt, nullptr);
-		if (hr == AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
-		{
-			//修正後のフレーム数を取得
-			unsigned __int32 fream = 0;
-			hr = audio->GetBufferSize(&fream);
-			defPeriod = REFERENCE_TIME(std::round(10000.0 * 1000 * fream / fmt->Format.nSamplesPerSec));
-
-			//再挑戦
-			hr = audio->Initialize(_AUDCLNT_SHAREMODE::AUDCLNT_SHAREMODE_EXCLUSIVE, AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST,
-				defPeriod, defPeriod, (WAVEFORMATEX*)fmt, nullptr);
-		}
-		block = fmt->Format.nBlockAlign;
-		PropVariantClear(&var);
-		prop->Release();
+		const double tmp = (2.0 * PI * double(cutoff)) / double(sample);
+		return (std::sin(tmp * n) / (PI * n)) * WinFunc(n, siderope, degree);
 	}
 
-	// オーディオイベントのセット
-	void* audioEvent = nullptr;
+	return (2.0 * double(cutoff)) / double(sample);
+}
+
+// 理想フィルタ次数の取得
+unsigned short Degree(const unsigned int& nyquist, const unsigned int& passBand, const unsigned int& stopBand, const unsigned short& siderope)
+{
+	const double PI = 3.14159265;
+	double tmp1 = (double(passBand) / double(nyquist)) * PI;
+	double tmp2 = (double(stopBand) / double(nyquist)) * PI;
+	double tmp = tmp2 - tmp1;
+
+	return unsigned short(double(siderope - 8) / (2.285 * tmp));
+}
+
+// サンプリングレート
+struct Sampling
+{
+	unsigned int sample;
+	unsigned int cutoff;
+};
+
+Sampling Sample(const unsigned int& beffor, const unsigned int& affter)
+{
+	auto rate = (beffor > affter) ? beffor / affter : affter / beffor;
+
+	Sampling tmp;
+	tmp.sample = beffor * (rate + 1);
+	tmp.cutoff = (beffor > affter) ? (affter / 2) * 0.9 : (beffor / 2) * 0.9;
+
+	return tmp;
+}
+
+// エントリーポイント
+int main()
+{
+	const unsigned short siderope = 50;
+	const unsigned short degree = 40;
+	const unsigned int sample = 44100;
+	const unsigned int cutoff = 20000;
+	std::vector<double>coe(degree + 1);
+	coe[degree / 2] = Sinc(0, siderope, degree, cutoff, sample);
+	for (unsigned int i = 1; i <= degree / 2; ++i)
 	{
-		audioEvent = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
-		hr = audio->SetEventHandle(audioEvent);
+		coe[degree / 2 + i] = Sinc(i, siderope, degree, cutoff, sample);
+		coe[degree / 2 - i] = Sinc(i, siderope, degree, cutoff, sample);
 	}
 
-	// オーディオレンダラの準備
-	IAudioRenderClient* render = nullptr;
+	for (size_t i = 0; i < coe.size(); ++i)
 	{
-		hr = audio->GetService(IID_PPV_ARGS(&render));
-
-		//バッファのクリア
-		unsigned __int32 fream = 0;
-		hr = audio->GetBufferSize(&fream);
-		unsigned char* data = nullptr;
-		hr = render->GetBuffer(fream, &data);
-		hr = render->ReleaseBuffer(fream, AUDCLNT_BUFFERFLAGS_SILENT);
+		std::cout << coe[i] << std::endl;
 	}
 
-	// スレッドの準備
-	unsigned __int32 fream = 0;
-	hr = audio->GetBufferSize(&fream);
-	void* threadEvent = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
-	void* wait[] = {
-		audioEvent,
-		threadEvent
-	};
-	std::thread th = std::thread([&]()->void {
-		unsigned long read = 0;
-		while (true)
-		{
-			auto hr = WaitForMultipleObjects(_countof(wait), wait, false, INFINITE);
-			if (hr != WAIT_OBJECT_0)
-			{
-				break;
-			}
+	std::cout << Degree(22050, 3500, 4000, 50) << std::endl;
 
-			unsigned __int32 fream = 0;
-			hr = audio->GetBufferSize(&fream);
-			unsigned char* data = nullptr;
-			hr = render->GetBuffer(fream, &data);
+	Sampling s = Sample(44100, 48000);
+	std::cout << s.sample << std::endl;
+	std::cout << s.cutoff << std::endl;
 
-			std::vector<int>tmp(fream* info.channel);
-			short* addr = (short*)&wave->at(read);
-			for (unsigned int i = 0; i < tmp.size(); ++i)
-			{
-				tmp[i] = addr[i] * 0xffff;
-			}
-			memcpy(data, &tmp.at(0), fream * block);
-
-			hr = render->ReleaseBuffer(fream, 0);
-			read += fream * 4;
-			if (read >= wave->size())
-			{
-				read = 0;
-			}
-		}
-	});
-
-	// オーディオレンダリング開始
+	std::vector<double>data(44100);
+	for (size_t i = 0; i < data.size(); ++i)
 	{
-		hr = audio->Start();
+		data[i] = std::sin(2.0 * 3.14159265 * 440.0 * i / data.size());
 	}
 
-	while (!(GetKeyState(VK_ESCAPE) & 0x80))
-	{
-
-	}
-
-	SetEvent(threadEvent);
-	th.join();
-	CloseHandle(threadEvent);
-	CloseHandle(audioEvent);
-	render->Release();
-	audio->Release();
-	device->Release();*/
-
-	CoUninitialize();
+	getchar();
 
 	return 0;
 }

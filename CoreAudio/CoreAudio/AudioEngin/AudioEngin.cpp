@@ -33,7 +33,7 @@ AudioEngin::AudioEngin(const unsigned int& index, const okmonn::DeviceType& type
 
 	CreateDevice(index, type);
 
-	wav::Load("_rsc/the_light.wav", waveInfo, wave);
+	wav::Load("_rsc/SOS.wav", waveInfo, wave);
 }
 
 // デストラクタ
@@ -151,7 +151,7 @@ long AudioEngin::CreateRender(void)
 // 初期化
 long AudioEngin::Initialize(const okmonn::AudioType& type, const okmonn::Info* info)
 {
-	auto hr = device->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, nullptr, (void**)&audio);
+	auto hr = device->Activate(__uuidof(IAudioClient), CLSCTX_INPROC_SERVER, nullptr, (void**)& audio);
 	if (FAILED(hr))
 	{
 		return hr;
@@ -176,7 +176,7 @@ long AudioEngin::Initialize(const okmonn::AudioType& type, const okmonn::Info* i
 		}
 		else
 		{
-			hr = audio->GetMixFormat((WAVEFORMATEX**)&fmt);
+			hr = audio->GetMixFormat((WAVEFORMATEX * *)& fmt);
 			_ASSERT(hr == S_OK);
 		}
 	}
@@ -206,7 +206,7 @@ long AudioEngin::Initialize(const okmonn::AudioType& type, const okmonn::Info* i
 
 	if (!FAILED(hr))
 	{
-		this->info = okmonn::Info(unsigned short(fmt->Format.nSamplesPerSec), unsigned char(fmt->Format.wBitsPerSample), unsigned char(fmt->Format.nChannels), 
+		this->info = okmonn::Info(unsigned short(fmt->Format.nSamplesPerSec), unsigned char(fmt->Format.wBitsPerSample), unsigned char(fmt->Format.nChannels),
 			(fmt->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT) ? true : false);
 
 		th = std::thread(&AudioEngin::Stream, this);
@@ -250,6 +250,7 @@ void AudioEngin::Stream(void)
 		for (unsigned int i = 0; i < tmp.size(); ++i)
 		{
 			tmp[i] = float(addr[i]) / float(0xffff / 2);
+			//tmp[i] = addr[i] * 0xffff;
 		}
 		memcpy(data, tmp.data(), (fream - padding) * info.channel * info.bit / 8);
 
