@@ -1,3 +1,0 @@
-﻿  Main.cpp
-C:\Users\1601271\Documents\GitHub\CoreAudio\CoreAudio\CoreAudio\Main.cpp(88,23): warning C4244:  '=': 'double' から 'unsigned int' への変換です。データが失われる可能性があります。
-  CoreAudio.vcxproj -> C:\Users\1601271\Documents\GitHub\CoreAudio\CoreAudio\Debug\CoreAudio.exe
