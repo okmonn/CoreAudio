@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Function">
+      <UniqueIdentifier>{560801a5-77e0-4d88-8898-039fd54bcaf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OkdioEngine">
+      <UniqueIdentifier>{34cd234e-f6a0-4ec3-a85a-f366b4d165f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ClassBase">
+      <UniqueIdentifier>{f73fbd29-46d5-4fcf-86aa-8444703141f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoundLoader">
+      <UniqueIdentifier>{05c15d63-9c1d-425d-b9b6-ff515ad66d6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Okdio">
+      <UniqueIdentifier>{493a9d6e-6052-4c08-baea-5a3c54f93e18}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Okdio\Function\Function.cpp">
+      <Filter>Function</Filter>
+    </ClCompile>
+    <ClCompile Include="Okdio\SoundLoader\SoundLoader.cpp">
+      <Filter>SoundLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="Okdio\Okdio.cpp">
+      <Filter>Okdio</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Okdio\Format\WavFormat.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Okdio\Information.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Okdio\Function\Function.h">
+      <Filter>Function</Filter>
+    </ClInclude>
+    <ClInclude Include="Okdio\OkdioEngine.h">
+      <Filter>OkdioEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Okdio\ClassBase\UnKnown.h">
+      <Filter>ClassBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Okdio\ClassBase\Singleton.h">
+      <Filter>ClassBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Okdio\SoundLoader\SoundLoader.h">
+      <Filter>SoundLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Okdio\Okdio.h">
+      <Filter>Okdio</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="Okdio\OkdioEngine.cu">
+      <Filter>OkdioEngine</Filter>
+    </CudaCompile>
+  </ItemGroup>
+</Project>
