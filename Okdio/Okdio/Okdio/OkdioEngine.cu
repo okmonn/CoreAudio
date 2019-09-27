@@ -326,23 +326,19 @@ std::vector<float> Test(const std::vector<double>& corre, const okmonn::ConvertP
 std::vector<float> Test2(const std::vector<double>& corre, const okmonn::ConvertParam& sample, const std::vector<float>& data, const okmonn::AudioInfo& info)
 {
 	std::vector<float>convert(data.size() * (double(sample.sample) / double(info.sample)), 0);
-	unsigned int offset = 0;
+	unsigned int offset = (corre.size() - 1) / 2;
 	unsigned int index = 0;
 	double gap = sample.gap;
+	unsigned int a = 0;
 	while (index < convert.size())
 	{
 		double integer = 0.0;
 		gap = std::modf(gap, &integer);
 		offset += int(integer);
-
 		//ïœä∑
 		for (size_t i = 0; i < (corre.size() - 1); ++i)
 		{
 			long tmp = offset - ((corre.size() - 1) / 2) + i;
-			if (tmp < 0)
-			{
-				continue;
-			}
 			if (size_t(tmp / sample.rate) * info.channel >= data.size())
 			{
 				break;
@@ -364,6 +360,7 @@ std::vector<float> Test2(const std::vector<double>& corre, const okmonn::Convert
 				{
 					if ((tmp / sample.rate) * info.channel + ch < data.size())
 					{
+						a = (tmp / sample.rate) * info.channel + ch;
 						convert[index + ch] += data[(tmp / sample.rate) * info.channel + ch] * float(comp);
 					}
 				}
@@ -382,12 +379,18 @@ std::vector<float> Test2(const std::vector<double>& corre, const okmonn::Convert
 	return convert;
 }
 
+#include <cuda_runtime.h>
+__global__ void Kernel(float* buf, short* data, double* corre)
+{
+
+}
+
 #include "SoundLoader/SoundLoader.h"
 
 // îÒìØä˙èàóù
 void OkdioEngine::Stream(void)
 {
-	std::string name = "SOS.wav";
+	std::string name = "Demo1.wav";
 	auto q = SoundLoader::Get().Load(name);
 	auto wave1 = SoundLoader::Get().GetWave(name);
 	auto waveInfo = SoundLoader::Get().GetInfo(name);
@@ -497,6 +500,7 @@ void OkdioEngine::TTT(std::vector<float>& data)
 				(*itr)->gap = std::modf((*itr)->gap, &integer);
 				(*itr)->offset += int(integer);
 
+				unsigned int a = 0;
 				for (size_t i = 0; i < corre->size() - 1; ++i)
 				{
 					long tmp = (*itr)->offset - ((corre->size()) / 2) + i;
@@ -514,6 +518,7 @@ void OkdioEngine::TTT(std::vector<float>& data)
 
 					if (tmp % (*itr)->GetConvertParam().rate == 0)
 					{
+						++a;
 						double comp = ((corre->at(i + 1) - corre->at(i)) * (1.0 - (*itr)->gap)) + corre->at(i);
 						if (i == ((corre->size() - 1) / 2) - 1)
 						{

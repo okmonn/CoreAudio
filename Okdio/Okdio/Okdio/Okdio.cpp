@@ -3,12 +3,13 @@
 
 // コンストラクタ
 Okdio::Okdio(const std::string& fileName) :
-	index(0), offset(0), play(false), loop(false)
+	index(0), play(false), loop(false)
 {
 	if (SoundLoader::Get().Load(fileName) == 0)
 	{
-		name = fileName;
-		gap = SoundLoader::Get().GetConvertParam(name).gap;
+		name   = fileName;
+		offset = (SoundLoader::Get().GetConvertCorre(name)->size() - 1) / 2;
+		gap    = SoundLoader::Get().GetConvertParam(name).gap;
 	}
 }
 

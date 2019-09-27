@@ -13,6 +13,9 @@ class SoundLoader :
 		okmonn::AudioInfo info;
 		//サウンドデータ
 		std::shared_ptr<std::vector<unsigned char>>wave;
+	};
+
+	struct Convert {
 		//サンプリング周波数変換パラメータ
 		okmonn::ConvertParam param;
 		//サンプリング周波数変換用係数
@@ -51,10 +54,16 @@ private:
 	// デストラクタ
 	~SoundLoader();
 
+	// サンプリング周波数変換用係数を求める
+	void ConvertCorre(const std::string& fileName);
+
 
 	// 出力サウンド情報
 	okmonn::AudioInfo info;
 
 	// 読み込みデータ
 	std::unordered_map<std::string, Sound>sound;
+
+	// サンプリング周波数変換用データ
+	std::unordered_map<unsigned int, Convert>convert;
 };

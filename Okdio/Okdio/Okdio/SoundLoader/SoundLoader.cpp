@@ -26,6 +26,19 @@ void SoundLoader::SetOutInfo(const okmonn::AudioInfo& info)
 	this->info = info;
 }
 
+// サンプリング周波数変換用係数を求める
+void SoundLoader::ConvertCorre(const std::string& fileName)
+{
+	if (sound.find(fileName) != sound.end())
+	{
+		if (convert.find(sound[fileName].info.sample) == convert.end())
+		{
+			convert[sound[fileName].info.sample].param = okmonn::GetConvertParam(info.sample, sound[fileName].info.sample);
+			convert[sound[fileName].info.sample].corre = std::make_shared<std::vector<double>>(okmonn::Sinc(100, okmonn::GetDegree(100, convert[sound[fileName].info.sample].param), convert[sound[fileName].info.sample].param));
+		}
+	}
+}
+
 // 読み込み
 int SoundLoader::Load(const std::string& fileName)
 {
@@ -40,8 +53,7 @@ int SoundLoader::Load(const std::string& fileName)
 		auto hr = func[fmt](fileName, sound[fileName].info, sound[fileName].wave);
 		if (hr == 0)
 		{
-			sound[fileName].param = okmonn::GetConvertParam(info.sample, sound[fileName].info.sample);
-			sound[fileName].corre = std::make_shared<std::vector<double>>(okmonn::Sinc(100, okmonn::GetDegree(100, sound[fileName].param), sound[fileName].param));
+			ConvertCorre(fileName);
 		}
 
 		return hr;
@@ -97,7 +109,7 @@ okmonn::ConvertParam SoundLoader::GetConvertParam(const std::string& fileName)
 {
 	if (sound.find(fileName) != sound.end())
 	{
-		return sound[fileName].param;
+		return convert[sound[fileName].info.sample].param;
 	}
 
 	return okmonn::ConvertParam();
@@ -108,7 +120,7 @@ std::shared_ptr<std::vector<double>> SoundLoader::GetConvertCorre(const std::str
 {
 	if (sound.find(fileName) != sound.end())
 	{
-		return sound[fileName].corre;
+		return convert[sound[fileName].info.sample].corre;
 	}
 
 	return nullptr;
