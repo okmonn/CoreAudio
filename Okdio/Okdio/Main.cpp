@@ -10,10 +10,10 @@ std::vector<std::complex<double>> FFT(const std::vector<double>& data)
 	unsigned int exponent = int(std::log2(data.size()));
 
 	//計算用バッファ
-	std::vector<double>buf(data.size());
+	std::vector<std::complex<double>>comp(data.size(), 0);
 
 	//ビット反転
-	std::vector<unsigned int>index(data.size());
+	std::vector<unsigned int>index(comp.size());
 	for (size_t i = 0; i < index.size(); ++i)
 	{
 		unsigned int tmp = i;
@@ -22,17 +22,26 @@ std::vector<std::complex<double>> FFT(const std::vector<double>& data)
 			index[i] <<= 1;
 			index[i] |= (tmp >> n) & 0x0001;
 		}
-		buf[i] = data[index[i]];
+		comp[i] = data[index[i]];
 	}
 
-	std::vector<std::complex<double>>comp(data.size(), 0);
 	for (unsigned int stage = 1; stage <= exponent; ++stage)
 	{
 		for (unsigned int i = 0; i < std::pow(2.0, exponent - stage); ++i)
 		{
 			for (unsigned int n = 0; n < std::pow(2.0, stage - 1); ++n)
 			{
-				auto tmp1 = std::exp(-Imaginary * 2.0 * std::acos(-1.0) * double(n) / std::pow(2.0, stage));
+				auto corre1 = std::exp(-Imaginary * 2.0 * std::acos(-1.0) * double(n) / std::pow(2.0, stage));
+				auto corre2 = std::exp(-Imaginary * 2.0 * std::acos(-1.0) * double(n + std::pow(2.0, stage - 1)) / std::pow(2.0, stage));
+
+				auto No1 = i * std::pow(2.0, stage) + n;
+				auto No2 = No1 + std::pow(2.0, stage - 1);
+
+				auto tmp1 = comp[No1];
+				auto tmp2 = comp[No2];
+
+				comp[No1] = tmp1 + (tmp2 * corre1);
+				comp[No2] = tmp1 + (tmp2 * corre2);
 			}
 		}
 	}
@@ -45,15 +54,15 @@ std::vector<double> IFFT(const std::vector<std::complex<double>>& comp)
 	//虚数単位
 	const std::complex<double>Imaginary = std::complex<double>(0, 1);
 
-	std::vector<double>data(comp.size(), 0);
-	std::vector<unsigned int>index(comp.size());
-
 	//累乗を求める
 	unsigned int exponent = int(std::log2(comp.size()));
 
-	//配列の入れ替え
-	index[0] = 0;
-	for (size_t i = 1; i < index.size(); ++i)
+	//計算用バッファ
+	std::vector<std::complex<double>>buf(comp.size(), 0);
+
+	//ビット反転
+	std::vector<unsigned int>index(comp.size());
+	for (size_t i = 0; i < index.size(); ++i)
 	{
 		unsigned int tmp = i;
 		for (unsigned int n = 0; n < exponent; ++n)
@@ -61,31 +70,34 @@ std::vector<double> IFFT(const std::vector<std::complex<double>>& comp)
 			index[i] <<= 1;
 			index[i] |= (tmp >> n) & 0x0001;
 		}
+		buf[i] = comp[index[i]];
 	}
 
 	for (unsigned int stage = 1; stage <= exponent; ++stage)
 	{
-		for (unsigned int e = 0; e < std::pow(2.0, stage); ++e)
+		for (unsigned int i = 0; i < std::pow(2.0, exponent - stage); ++i)
 		{
-			auto tmp = std::exp(Imaginary * 2.0 * std::acos(-1.0) * double(e) / std::pow(2.0, stage));
-			for (unsigned int i = 0; i < std::pow(2.0, exponent - stage); ++i)
+			for (unsigned int n = 0; n < std::pow(2.0, stage - 1); ++n)
 			{
-				unsigned int No = i * std::pow(2.0, stage) + e;
-				if (e / int(std::pow(2.0, stage - 1)) == 0)
-				{
-					data[No] += (comp[index[No]] + (comp[index[No + std::pow(2.0, stage - 1)]] * tmp)).real();
-				}
-				else
-				{
-					data[No] += ((comp[index[No]] * tmp) + comp[index[No - std::pow(2.0, stage - 1)]]).real();
-				}
+				auto corre1 = std::exp(Imaginary * 2.0 * std::acos(-1.0) * double(n) / std::pow(2.0, stage));
+				auto corre2 = std::exp(Imaginary * 2.0 * std::acos(-1.0) * double(n + std::pow(2.0, stage - 1)) / std::pow(2.0, stage));
+
+				auto No1 = i * std::pow(2.0, stage) + n;
+				auto No2 = No1 + std::pow(2.0, stage - 1);
+
+				auto tmp1 = buf[No1];
+				auto tmp2 = buf[No2];
+
+				buf[No1] = tmp1 + (tmp2 * corre1);
+				buf[No2] = tmp1 + (tmp2 * corre2);
 			}
 		}
 	}
 
-	for (auto& i : data)
+	std::vector<double>data(comp.size());
+	for (size_t i = 0; i < buf.size(); ++i)
 	{
-		i /= comp.size();
+		data[i] = buf[i].real() / buf.size();
 	}
 
 	return data;
