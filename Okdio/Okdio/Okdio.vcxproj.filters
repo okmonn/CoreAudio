@@ -42,6 +42,9 @@
     <ClCompile Include="Okdio\Okdio.cpp">
       <Filter>Okdio</Filter>
     </ClCompile>
+    <ClCompile Include="Okdio\OkdioEngine.cpp">
+      <Filter>OkdioEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Okdio\Format\WavFormat.h">
@@ -68,10 +71,5 @@
     <ClInclude Include="Okdio\Okdio.h">
       <Filter>Okdio</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <CudaCompile Include="Okdio\OkdioEngine.cu">
-      <Filter>OkdioEngine</Filter>
-    </CudaCompile>
   </ItemGroup>
 </Project>

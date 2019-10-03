@@ -147,17 +147,17 @@ void* OkdioEngine::SetFormat(IAudioClient* audio, const okmonn::AudioInfo* info)
 	{
 		fmt = new WAVEFORMATEXTENSIBLE();
 
-		fmt->Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
-		fmt->Format.nSamplesPerSec = info->sample;
-		fmt->Format.wBitsPerSample = info->bit;
-		fmt->Format.nChannels = info->channel;
-		fmt->Format.nBlockAlign = fmt->Format.nChannels * fmt->Format.wBitsPerSample / 8;
+		fmt->Format.cbSize          = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
+		fmt->Format.nSamplesPerSec  = info->sample;
+		fmt->Format.wBitsPerSample  = info->byte * 8;
+		fmt->Format.nChannels       = info->channel;
+		fmt->Format.nBlockAlign     = fmt->Format.nChannels * fmt->Format.wBitsPerSample / 8;
 		fmt->Format.nAvgBytesPerSec = fmt->Format.nSamplesPerSec * fmt->Format.nBlockAlign;
-		fmt->Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
+		fmt->Format.wFormatTag      = WAVE_FORMAT_EXTENSIBLE;
 
-		fmt->dwChannelMask = spk[fmt->Format.nChannels - 1];
+		fmt->dwChannelMask               = spk[fmt->Format.nChannels - 1];
 		fmt->Samples.wValidBitsPerSample = fmt->Format.wBitsPerSample;
-		fmt->SubFormat = (info->flag == 0) ? KSDATAFORMAT_SUBTYPE_PCM : KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
+		fmt->SubFormat                   = (info->flag == 0) ? KSDATAFORMAT_SUBTYPE_PCM : KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
 	}
 
 	return fmt;
@@ -171,25 +171,25 @@ void OkdioEngine::CreateAudioClient(void)
 	_ASSERT(hr == S_OK);
 
 	//フォーマットのチェック
-	WAVEFORMATEXTENSIBLE* fmt = (WAVEFORMATEXTENSIBLE*)SetFormat(audio.Get());
+	WAVEFORMATEXTENSIBLE* fmt   = (WAVEFORMATEXTENSIBLE*)SetFormat(audio.Get());
 	WAVEFORMATEXTENSIBLE* corre = nullptr;
 	{
 		hr = audio->IsFormatSupported(AUDCLNT_SHAREMODE(audioType), (WAVEFORMATEX*)fmt, (WAVEFORMATEX * *)& corre);
 		if (hr == S_OK)
 		{
-			info.sample = fmt->Format.nSamplesPerSec;
-			info.bit = unsigned char(fmt->Format.wBitsPerSample);
+			info.sample  = fmt->Format.nSamplesPerSec;
+			info.byte    = unsigned char(fmt->Format.wBitsPerSample / 8);
 			info.channel = unsigned char(fmt->Format.nChannels);
-			info.flag = (fmt->SubFormat == KSDATAFORMAT_SUBTYPE_PCM) ? 0 : 1;
+			info.flag    = (fmt->SubFormat == KSDATAFORMAT_SUBTYPE_PCM) ? 0 : 1;
 		}
 		else
 		{
 			OutputDebugStringA("\nフォーマットがサポートされていません\n最適なフォーマットに修正します\n");
 
-			info.sample = corre->Format.nSamplesPerSec;
-			info.bit = unsigned char(corre->Format.wBitsPerSample);
+			info.sample  = corre->Format.nSamplesPerSec;
+			info.byte    = unsigned char(corre->Format.wBitsPerSample / 8);
 			info.channel = unsigned char(corre->Format.nChannels);
-			info.flag = (corre->SubFormat == KSDATAFORMAT_SUBTYPE_PCM) ? 0 : 1;
+			info.flag    = (corre->SubFormat == KSDATAFORMAT_SUBTYPE_PCM) ? 0 : 1;
 
 			hr = audio->IsFormatSupported(AUDCLNT_SHAREMODE(audioType), (WAVEFORMATEX*)corre, nullptr);
 			_ASSERT(hr == S_OK);
@@ -211,17 +211,17 @@ void OkdioEngine::Initialize(void)
 	}
 
 	WAVEFORMATEXTENSIBLE fmt{};
-	fmt.Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
-	fmt.Format.nSamplesPerSec = info.sample;
-	fmt.Format.wBitsPerSample = info.bit;
-	fmt.Format.nChannels = info.channel;
-	fmt.Format.nBlockAlign = fmt.Format.nChannels * fmt.Format.wBitsPerSample / 8;
+	fmt.Format.cbSize          = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
+	fmt.Format.nSamplesPerSec  = info.sample;
+	fmt.Format.wBitsPerSample  = info.byte * 8;
+	fmt.Format.nChannels       = info.channel;
+	fmt.Format.nBlockAlign     = fmt.Format.nChannels * fmt.Format.wBitsPerSample / 8;
 	fmt.Format.nAvgBytesPerSec = fmt.Format.nSamplesPerSec * fmt.Format.nBlockAlign;
-	fmt.Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
+	fmt.Format.wFormatTag      = WAVE_FORMAT_EXTENSIBLE;
 
-	fmt.dwChannelMask = spk[fmt.Format.nChannels - 1];
+	fmt.dwChannelMask               = spk[fmt.Format.nChannels - 1];
 	fmt.Samples.wValidBitsPerSample = fmt.Format.wBitsPerSample;
-	fmt.SubFormat = (info.flag == 0) ? KSDATAFORMAT_SUBTYPE_PCM : KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
+	fmt.SubFormat                   = (info.flag == 0) ? KSDATAFORMAT_SUBTYPE_PCM : KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
 
 	//初期化
 	hr = audio->Initialize(AUDCLNT_SHAREMODE(audioType), AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST,
@@ -267,68 +267,21 @@ void OkdioEngine::CreateAudioRender(void)
 	}
 }
 
-std::vector<float> Test(const std::vector<double>& corre, const okmonn::ConvertParam& sample, const std::vector<float>& data, const okmonn::AudioInfo& info)
+#include "SoundLoader/SoundLoader.h"
+
+std::vector<float> Test(const std::vector<float>& data, const okmonn::AudioInfo& info)
 {
-	std::vector<std::vector<float>>channel(info.channel);
-	for (size_t ch = 0; ch < channel.size(); ++ch)
-	{
-		channel[ch].resize((data.size() / info.channel) * sample.rate);
-		for (size_t i = 0; i < data.size() / info.channel; ++i)
-		{
-			channel[ch][i * sample.rate] = data[(i * info.channel) + ch];
-			for (unsigned char n = 1; n < sample.rate; ++n)
-			{
-				channel[ch][(i * sample.rate) + n] = 0.0f;
-			}
-		}
-	}
+	auto fft = okmonn::FFT(data);
 
-	std::vector<float>convert;
-	double start = 0;
-	double end = corre.size() - 1;
-	double gap = sample.gap;
-	unsigned int target = end / 2;
-	while (end < channel[0].size())
-	{
-		if (gap >= 1.0)
-		{
-			start += 1.0;
-			end += 1.0;
-			gap -= 1.0;
-		}
-		else
-		{
-			std::vector<double>tmp(corre.size() - 1, 0);
-			for (size_t i = 0; i < tmp.size(); ++i)
-			{
-				tmp[i] = ((corre[i + 1] - corre[i]) * (1.0 - gap)) + corre[i];
-			}
-
-			tmp[tmp.size() / 2 - 1] = ((corre[(tmp.size() / 2) - 1] - corre[tmp.size() / 2]) * std::pow(-gap, 2.0)) + corre[tmp.size() / 2];
-			tmp[tmp.size() / 2 + 0] = ((corre[(tmp.size() / 2) - 1] - corre[tmp.size() / 2]) * std::pow((1.0 - gap), 2.0)) + corre[tmp.size() / 2];
-
-			for (auto& i : channel)
-			{
-				double val = 0.0;
-				for (size_t n = 0; n < tmp.size(); ++n)
-				{
-					val += i[start + n] * tmp[n];
-				}
-				convert.push_back(float(val));
-			}
-			gap += sample.gap;
-		}
-	}
-
-	return convert;
+	return okmonn::IFFT(fft, data.size());
 }
 
-std::vector<float> Test2(const std::vector<double>& corre, const okmonn::ConvertParam& sample, const std::vector<float>& data, const okmonn::AudioInfo& info)
+std::vector<float> Resampling(const std::vector<double>& corre, const okmonn::ConvertParam& param, const std::vector<float>& data, const okmonn::AudioInfo& info)
 {
-	std::vector<float>convert(data.size() * (double(sample.sample) / double(info.sample)), 0);
+	std::vector<float>convert(data.size() * (double(param.sample) / double(info.sample)), 0);
 	unsigned int offset = (corre.size() - 1) / 2;
 	unsigned int index = 0;
-	double gap = sample.gap;
+	double gap = param.gap;
 	unsigned int a = 0;
 	while (index < convert.size())
 	{
@@ -339,12 +292,12 @@ std::vector<float> Test2(const std::vector<double>& corre, const okmonn::Convert
 		for (size_t i = 0; i < (corre.size() - 1); ++i)
 		{
 			long tmp = offset - ((corre.size() - 1) / 2) + i;
-			if (size_t(tmp / sample.rate) * info.channel >= data.size())
+			if (size_t(tmp / param.rate) * info.channel >= data.size())
 			{
 				break;
 			}
 
-			if (tmp % sample.rate == 0)
+			if (tmp % param.rate == 0)
 			{
 				double comp = ((corre[i + 1] - corre[i]) * (1.0 - gap)) + corre[i];
 				if (i == ((corre.size() - 1) / 2) - 1)
@@ -358,10 +311,9 @@ std::vector<float> Test2(const std::vector<double>& corre, const okmonn::Convert
 
 				for (unsigned char ch = 0; ch < info.channel; ++ch)
 				{
-					if ((tmp / sample.rate) * info.channel + ch < data.size())
+					if ((tmp / param.rate) * info.channel + ch < data.size())
 					{
-						a = (tmp / sample.rate) * info.channel + ch;
-						convert[index + ch] += data[(tmp / sample.rate) * info.channel + ch] * float(comp);
+						convert[index + ch] += data[(tmp / param.rate) * info.channel + ch] * float(comp);
 					}
 				}
 			}
@@ -370,41 +322,31 @@ std::vector<float> Test2(const std::vector<double>& corre, const okmonn::Convert
 		//ゲイン調節
 		for (unsigned char ch = 0; ch < info.channel; ++ch)
 		{
-			convert[index + ch] *= sample.rate - 0.2f;
+			convert[index + ch] *= param.rate - 0.2f;
 		}
 		index += info.channel;
-		gap += sample.gap;
+		gap += param.gap;
 	}
 
 	return convert;
 }
 
-#include <cuda_runtime.h>
-__global__ void Kernel(float* buf, short* data, double* corre)
-{
-
-}
-
-#include "SoundLoader/SoundLoader.h"
-
 // 非同期処理
 void OkdioEngine::Stream(void)
 {
-	std::string name = "Demo1.wav";
+	std::string name = "SOS.wav";
 	auto q = SoundLoader::Get().Load(name);
 	auto wave1 = SoundLoader::Get().GetWave(name);
 	auto waveInfo = SoundLoader::Get().GetInfo(name);
-	std::vector<float>wave2(wave1->size() / (waveInfo.bit / 8));
+	std::vector<float>wave2(wave1->size() / (waveInfo.byte));
 	short* ptr = (short*)wave1->data();
 	for (size_t i = 0; i < wave2.size(); ++i)
 	{
 		wave2[i] = okmonn::Normalize<float>(ptr[i]);
 	}
 	unsigned int index = 0;
-	auto sample = okmonn::GetConvertParam(waveInfo.sample, 48000);
-	auto de = okmonn::GetDegree(100, sample);
-	auto corre = okmonn::Sinc(100, de, sample);
-	wave2 = Test2(corre, sample, wave2, waveInfo);
+	auto param = okmonn::GetConvertParam(waveInfo.sample, info.sample);
+	wave2 = Resampling(*SoundLoader::Get().GetConvertCorre(name), param, wave2, waveInfo);
 
 	unsigned __int32 fream = 0;
 	auto hr = audio->GetBufferSize(&fream);
@@ -436,6 +378,7 @@ void OkdioEngine::Stream(void)
 		{
 			size = wave2.size() - index;
 		}
+
 		memcpy(data, &wave2[index], sizeof(wave2[0]) * size);
 
 		hr = render->ReleaseBuffer(fream - padding, 0);
@@ -445,125 +388,6 @@ void OkdioEngine::Stream(void)
 		if (wave2.size() <= index)
 		{
 			index = 0;
-		}
-	}
-
-	/*unsigned __int32 fream = 0;
-	auto hr = audio->GetBufferSize(&fream);
-	_ASSERT(hr == S_OK);
-
-	unsigned __int32 padding = 0;
-	unsigned char* data = nullptr;
-	while (true)
-	{
-		hr = WaitForMultipleObjects(handle.size(), handle.data(), false, INFINITE);
-		if (hr != WAIT_OBJECT_0)
-		{
-			break;
-		}
-
-		if (audioType == okmonn::AudioType::SHARED)
-		{
-			hr = audio->GetCurrentPadding(&padding);
-			_ASSERT(hr == S_OK);
-		}
-
-		hr = render->GetBuffer(fream - padding, &data);
-		_ASSERT(hr == S_OK);
-
-		//データのコピー
-		std::vector<float>wave((fream - padding) * info.channel, 0);
-		TTT(wave);
-
-		memcpy(data, wave.data(), sizeof(wave[0]) * wave.size());
-
-		hr = render->ReleaseBuffer(fream - padding, 0);
-		_ASSERT(hr == S_OK);
-	}*/
-}
-
-void OkdioEngine::TTT(std::vector<float>& data)
-{
-	for (auto itr = okdio.begin(); itr != okdio.end();)
-	{
-		std::unique_lock<std::mutex>lock(mtx);
-		if ((*itr) != nullptr)
-		{
-			auto corre = (*itr)->GetConvertCorre().lock();
-			short* ptr = (short*)(*itr)->GetWave().lock()->data();
-
-			bool flag = false;
-			unsigned int index = 0;
-			while (index < data.size())
-			{
-				double integer = 0.0;
-				(*itr)->gap = std::modf((*itr)->gap, &integer);
-				(*itr)->offset += int(integer);
-
-				unsigned int a = 0;
-				for (size_t i = 0; i < corre->size() - 1; ++i)
-				{
-					long tmp = (*itr)->offset - ((corre->size()) / 2) + i;
-					if (tmp < 0)
-					{
-						continue;
-					}
-					if (size_t(tmp / (*itr)->GetConvertParam().rate) * info.channel >= (*itr)->GetWaveNum())
-					{
-						(*itr)->offset = 0;
-						(*itr)->gap = (*itr)->GetConvertParam().gap;
-						flag = true;
-						break;
-					}
-
-					if (tmp % (*itr)->GetConvertParam().rate == 0)
-					{
-						++a;
-						double comp = ((corre->at(i + 1) - corre->at(i)) * (1.0 - (*itr)->gap)) + corre->at(i);
-						if (i == ((corre->size() - 1) / 2) - 1)
-						{
-							comp = ((corre->at(((corre->size() - 1) / 2) - 1) - corre->at(((corre->size() - 1) / 2))) * std::pow(-(*itr)->gap, 2.0)) + corre->at(((corre->size() - 1) / 2));
-						}
-						else if (i == (corre->size() - 1) / 2)
-						{
-							comp = ((corre->at(((corre->size() - 1) / 2) - 1) - corre->at(((corre->size() - 1) / 2))) * std::pow((1.0 - (*itr)->gap), 2.0)) + corre->at(((corre->size() - 1) / 2));
-						}
-
-						for (unsigned char ch = 0; ch < info.channel; ++ch)
-						{
-							if ((tmp / (*itr)->GetConvertParam().rate) * info.channel + ch < (*itr)->GetWaveNum())
-							{
-								data[index + ch] += okmonn::Normalize<float>(ptr[(tmp / (*itr)->GetConvertParam().rate) * info.channel + ch]) * float(comp);
-							}
-						}
-					}
-				}
-
-				//ゲイン調節
-				for (unsigned char ch = 0; ch < info.channel; ++ch)
-				{
-					data[index + ch] *= (*itr)->GetConvertParam().rate - 0.2f;
-				}
-
-				if (flag == false)
-				{
-					(*itr)->gap += (*itr)->GetConvertParam().gap;
-				}
-				else
-				{
-					if ((*itr)->loop == false)
-					{
-						break;
-					}
-				}
-				index += info.channel;
-			}
-
-			++itr;
-		}
-		else
-		{
-			itr = okdio.erase(itr);
 		}
 	}
 }

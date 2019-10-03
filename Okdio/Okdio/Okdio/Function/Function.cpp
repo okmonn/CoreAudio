@@ -303,3 +303,123 @@ std::vector<T> okmonn::IDFT(const std::vector<std::complex<T>>& comp)
 }
 template std::vector<double> okmonn::IDFT(const std::vector<std::complex<double>>&);
 template std::vector<float> okmonn::IDFT(const std::vector<std::complex<float>>&);
+
+// 高速フーリエ変換
+template<typename T>
+std::vector<std::complex<T>> okmonn::FFT(const std::vector<T>& data)
+{
+	//虚数単位
+	const std::complex<T>Imaginary = std::complex<T>(0, 1);
+
+	//累乗を求める
+	unsigned int exponent = int(std::ceil(std::log2(data.size())));
+
+	//2の累乗の数
+	unsigned int num = int(std::pow(2.0, exponent));
+
+	//計算用バッファ
+	std::vector<std::complex<T>>comp(num, 0);
+
+	//ビット反転
+	std::vector<unsigned int>index(comp.size());
+	for (size_t i = 0; i < index.size(); ++i)
+	{
+		unsigned int tmp = i;
+		for (unsigned int n = 0; n < exponent; ++n)
+		{
+			index[i] <<= 1;
+			index[i] |= (tmp >> n) & 0x0001;
+		}
+		if (index[i] < data.size())
+		{
+			comp[i] = data[index[i]];
+		}
+		else
+		{
+			comp[i] = T(0);
+		}
+	}
+
+	for (unsigned int stage = 1; stage <= exponent; ++stage)
+	{
+		for (unsigned int i = 0; i < std::pow(2.0, exponent - stage); ++i)
+		{
+			for (unsigned int n = 0; n < std::pow(2.0, stage - 1); ++n)
+			{
+				std::complex<T> corre1 = std::exp(-Imaginary * T(2.0) * std::acos(T(-1.0)) * T(n) / T(std::pow(2.0, stage)));
+				std::complex<T> corre2 = std::exp(-Imaginary * T(2.0) * std::acos(T(-1.0)) * T(n + std::pow(2.0, stage - 1)) / T(std::pow(2.0, stage)));
+
+				unsigned int No1 = int(i * std::pow(2.0, stage) + n);
+				unsigned int No2 = int(No1 + std::pow(2.0, stage - 1));
+
+				std::complex<T> tmp1 = comp[No1];
+				std::complex<T> tmp2 = comp[No2];
+
+				comp[No1] = tmp1 + (tmp2 * corre1);
+				comp[No2] = tmp1 + (tmp2 * corre2);
+			}
+		}
+	}
+
+	return comp;
+}
+template std::vector<std::complex<double>> okmonn::FFT(const std::vector<double>&);
+template std::vector<std::complex<float>> okmonn::FFT(const std::vector<float>&);
+
+// 逆高速フーリエ変換
+template<typename T>
+std::vector<T> okmonn::IFFT(const std::vector<std::complex<T>>& comp, const size_t& num)
+{
+	//虚数単位
+	const std::complex<T>Imaginary = std::complex<T>(0, 1);
+
+	//累乗を求める
+	unsigned int exponent = int(std::log2(comp.size()));
+
+	//計算用バッファ
+	std::vector<std::complex<T>>buf(comp.size(), 0);
+
+	//ビット反転
+	std::vector<unsigned int>index(comp.size());
+	for (size_t i = 0; i < index.size(); ++i)
+	{
+		unsigned int tmp = i;
+		for (unsigned int n = 0; n < exponent; ++n)
+		{
+			index[i] <<= 1;
+			index[i] |= (tmp >> n) & 0x0001;
+		}
+		buf[i] = comp[index[i]];
+	}
+
+	for (unsigned int stage = 1; stage <= exponent; ++stage)
+	{
+		for (unsigned int i = 0; i < std::pow(2.0, exponent - stage); ++i)
+		{
+			for (unsigned int n = 0; n < std::pow(2.0, stage - 1); ++n)
+			{
+				std::complex<T> corre1 = std::exp(Imaginary * T(2.0) * std::acos(T(-1.0)) * T(n) / T(std::pow(2.0, stage)));
+				std::complex<T> corre2 = std::exp(Imaginary * T(2.0) * std::acos(T(-1.0)) * T(n + std::pow(2.0, stage - 1)) / T(std::pow(2.0, stage)));
+
+				unsigned int No1 = int(i * std::pow(2.0, stage) + n);
+				unsigned int No2 = int(No1 + std::pow(2.0, stage - 1));
+
+				std::complex<T> tmp1 = buf[No1];
+				std::complex<T> tmp2 = buf[No2];
+
+				buf[No1] = tmp1 + (tmp2 * corre1);
+				buf[No2] = tmp1 + (tmp2 * corre2);
+			}
+		}
+	}
+
+	std::vector<T>data(num);
+	for (size_t i = 0; i < data.size(); ++i)
+	{
+		data[i] = buf[i].real() / buf.size();
+	}
+
+	return data;
+}
+template std::vector<double> okmonn::IFFT(const std::vector<std::complex<double>>&, const size_t&);
+template std::vector<float> okmonn::IFFT(const std::vector<std::complex<float>>&, const size_t&);

@@ -8,24 +8,24 @@ namespace okmonn
 	{
 		//サンプリング周波数
 		unsigned int sample;
-		//量子化ビット数
-		unsigned char bit;
+		//量子化ビット数のバイト数
+		unsigned char byte;
 		//チャンネル数
 		unsigned char channel;
 		//floatフラグ
 		unsigned char flag;
 
 		AudioInfo() {
-			sample = bit = channel = flag = 0;
+			sample = byte = channel = flag = 0;
 		}
 		AudioInfo(const unsigned int& s, const unsigned char& b, const unsigned char& c, const unsigned char& f) :
-			sample(s), bit(b), channel(c), flag(f) {}
+			sample(s), byte(b), channel(c), flag(f) {}
 		AudioInfo(const AudioInfo& info) {
 			(*this) = info;
 		}
 		void operator=(const AudioInfo& info) {
 			sample  = info.sample;
-			bit     = info.bit;
+			byte    = info.byte;
 			channel = info.channel;
 			flag    = info.flag;
 		}

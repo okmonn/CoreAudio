@@ -60,4 +60,12 @@ namespace okmonn
 	// 逆離散フーリエ変換
 	template <typename T>
 	std::vector<T> IDFT(const std::vector<std::complex<T>>& comp);
+
+	// 高速フーリエ変換
+	template <typename T>
+	std::vector<std::complex<T>> FFT(const std::vector<T>& data);
+
+	// 逆高速フーリエ変換
+	template <typename T>
+	std::vector<T> IFFT(const std::vector<std::complex<T>>& comp, const size_t& num);
 }

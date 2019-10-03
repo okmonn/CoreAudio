@@ -98,7 +98,7 @@ size_t SoundLoader::GetWaveNum(const std::string& fileName)
 {
 	if (sound.find(fileName) != sound.end())
 	{
-		return sound[fileName].wave->size() / (sound[fileName].info.bit / 8);
+		return sound[fileName].wave->size() / (sound[fileName].info.byte);
 	}
 
 	return 0;

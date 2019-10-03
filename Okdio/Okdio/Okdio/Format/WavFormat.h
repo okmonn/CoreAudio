@@ -87,7 +87,7 @@ namespace wav
 		} while (id != "data");
 
 		//波形データ読み込み
-		info = okmonn::AudioInfo(unsigned int(fmt.sample), unsigned char(fmt.bit), unsigned char(fmt.channel), 0);
+		info = okmonn::AudioInfo(unsigned int(fmt.sample), unsigned char(fmt.bit / 8), unsigned char(fmt.channel), 0);
 		data = std::make_shared<std::vector<unsigned char>>(size);
 		fread_s(data->data(), size, size, 1, file);
 
