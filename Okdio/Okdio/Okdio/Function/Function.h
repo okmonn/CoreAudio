@@ -53,6 +53,12 @@ namespace okmonn
 	template <typename T>
 	T Normalize(const short& val);
 
+	// 32bit-float‚©‚ç8bit-unsigned char
+	unsigned char FloatToChar(const float& val);
+
+	// 32bit-float‚©‚ç16bit-short
+	short FloatToShort(const float& val);
+
 	// —£Uƒt[ƒŠƒG•ÏŠ·
 	template <typename T>
 	std::vector<std::complex<T>> DFT(const std::vector<T>& data);

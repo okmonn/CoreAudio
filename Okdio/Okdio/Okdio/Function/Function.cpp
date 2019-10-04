@@ -243,6 +243,38 @@ std::vector<double> okmonn::Sinc(const unsigned char& siderope, const unsigned s
 	return tmp;
 }
 
+// 32bit-float‚©‚ç8bit-unsigned char
+unsigned char okmonn::FloatToChar(const float& val)
+{
+	float tmp = val;
+	if (tmp > 1.0f)
+	{
+		tmp = 1.0f;
+	}
+	else if (tmp < -1.0f)
+	{
+		tmp = -1.0f;
+	}
+
+	return unsigned char(std::round((tmp + 1.0f) * float(0xff / 2)));
+}
+
+// 32bit-float‚©‚ç16bit-short
+short okmonn::FloatToShort(const float& val)
+{
+	float tmp = val;
+	if (tmp > 1.0f)
+	{
+		tmp = 1.0f;
+	}
+	else if (tmp < -1.0f)
+	{
+		tmp = -1.0f;
+	}
+
+	return short(std::round(tmp * float(0xffff / 2)));
+}
+
 template<typename T>
 T okmonn::Normalize(const unsigned char& val)
 {
@@ -265,14 +297,15 @@ template<typename T>
 std::vector<std::complex<T>> okmonn::DFT(const std::vector<T>& data)
 {
 	//‹•”’PˆÊ
-	const std::complex<T>Imaginary = std::complex<T>(0, 1);
+	const std::complex<T>Imaginary(0, 1);
 
 	std::vector<std::complex<T>>comp(data.size(), 0);
 	for (size_t i = 0; i < comp.size(); ++i)
 	{
 		for (size_t n = 0; n < comp.size(); ++n)
 		{
-			comp[i] += data[n] * std::exp(-Imaginary * T(2.0) * std::acos(T(-1.0)) * T(i) * T(n) / T(comp.size()));
+			//comp[i] += data[n] * std::exp(-Imaginary * T(2.0) * std::acos(T(-1.0)) * T(i) * T(n) / T(comp.size()));
+			comp[i] += std::cos(T(2.0) * std::acos(T(-1.0)) * T(i * n) / T(data.size())) - (Imaginary * std::sin(T(2.0) * std::acos(T(-1.0)) * T(i * n) / T(data.size())));
 		}
 	}
 

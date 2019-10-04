@@ -344,6 +344,7 @@ void OkdioEngine::Stream(void)
 	{
 		wave2[i] = okmonn::Normalize<float>(ptr[i]);
 	}
+	auto a = okmonn::DFT(std::vector<double>(123, 0));
 	unsigned int index = 0;
 	auto param = okmonn::GetConvertParam(waveInfo.sample, info.sample);
 	wave2 = Resampling(*SoundLoader::Get().GetConvertCorre(name), param, wave2, waveInfo);
