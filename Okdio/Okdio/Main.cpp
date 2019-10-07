@@ -8,7 +8,7 @@ int main(void)
 
 	{
 		Microsoft::WRL::ComPtr<OkdioEngine>engine = nullptr;
-		hr = okmonn::CreateOkdioEngine(okmonn::AudioDeviceType::Render, okmonn::AudioType::SHARED, IID_PPV_ARGS(&engine));
+		hr = okmonn::CreateOkdioEngine(okmonn::AudioDeviceType::Render, okmonn::AudioType::EXCLUSIVE, IID_PPV_ARGS(&engine));
 		engine->Start();
 		while (!(GetKeyState(VK_ESCAPE) & 0x80))
 		{

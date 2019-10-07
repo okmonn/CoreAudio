@@ -243,6 +243,24 @@ std::vector<double> okmonn::Sinc(const unsigned char& siderope, const unsigned s
 	return tmp;
 }
 
+// 8bitÇ©ÇÁ32bit-float
+template<typename T>
+T okmonn::Normalize(const unsigned char& val)
+{
+	return (T(val) / T(0xff / 2)) - T(1.0);
+}
+template double okmonn::Normalize(const unsigned char&);
+template float okmonn::Normalize(const unsigned char&);
+
+// 16bitÇ©ÇÁ32bit-float
+template<typename T>
+T okmonn::Normalize(const short& val)
+{
+	return T(val) / T(0xffff / 2);
+}
+template double okmonn::Normalize(const short&);
+template float okmonn::Normalize(const short&);
+
 // 32bit-floatÇ©ÇÁ8bit-unsigned char
 unsigned char okmonn::FloatToChar(const float& val)
 {
@@ -274,22 +292,6 @@ short okmonn::FloatToShort(const float& val)
 
 	return short(std::round(tmp * float(0xffff / 2)));
 }
-
-template<typename T>
-T okmonn::Normalize(const unsigned char& val)
-{
-	return (T(val) / T(0xff / 2)) - T(1.0);
-}
-template double okmonn::Normalize(const unsigned char&);
-template float okmonn::Normalize(const unsigned char&);
-
-template<typename T>
-T okmonn::Normalize(const short& val)
-{
-	return T(val) / T(0xffff / 2);
-}
-template double okmonn::Normalize(const short&);
-template float okmonn::Normalize(const short&);
 
 
 // ó£éUÉtÅ[ÉäÉGïœä∑

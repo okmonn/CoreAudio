@@ -87,7 +87,7 @@ void OkdioEngine::CreateDevice(const char& deviceIndex)
 	//オーディオデバイスのコレクション列挙用インターフェース
 	Microsoft::WRL::ComPtr<IMMDeviceCollection>collection = nullptr;
 	{
-		hr = enumerator->EnumAudioEndpoints(EDataFlow(audioType), DEVICE_STATE_ACTIVE, &collection);
+		hr = enumerator->EnumAudioEndpoints(EDataFlow(devType), DEVICE_STATE_ACTIVE, &collection);
 		_ASSERT(hr == S_OK);
 	}
 
@@ -101,7 +101,7 @@ void OkdioEngine::CreateDevice(const char& deviceIndex)
 	//デフォルトデバイス使用
 	if (deviceIndex < 0 || deviceNum <= unsigned int(deviceIndex))
 	{
-		hr = enumerator->GetDefaultAudioEndpoint(EDataFlow(audioType), ERole::eConsole, &device);
+		hr = enumerator->GetDefaultAudioEndpoint(EDataFlow(devType), ERole::eConsole, &device);
 		_ASSERT(hr == S_OK);
 	}
 	//指定デバイス使用
@@ -124,7 +124,7 @@ void* OkdioEngine::SetFormat(IAudioClient* audio, const okmonn::AudioInfo* info)
 		//共有モード
 		if (audioType == okmonn::AudioType::SHARED)
 		{
-			hr = audio->GetMixFormat((WAVEFORMATEX * *)& fmt);
+			hr = audio->GetMixFormat((WAVEFORMATEX**)&fmt);
 			_ASSERT(hr == S_OK);
 		}
 		//排他モード
@@ -167,18 +167,18 @@ void* OkdioEngine::SetFormat(IAudioClient* audio, const okmonn::AudioInfo* info)
 void OkdioEngine::CreateAudioClient(void)
 {
 	//オーディオクライアント生成
-	auto hr = device->Activate(__uuidof(audio), CLSCTX_INPROC_SERVER, nullptr, (void**)& audio);
+	auto hr = device->Activate(__uuidof(audio), CLSCTX_INPROC_SERVER, nullptr, (void**)&audio);
 	_ASSERT(hr == S_OK);
 
 	//フォーマットのチェック
 	WAVEFORMATEXTENSIBLE* fmt   = (WAVEFORMATEXTENSIBLE*)SetFormat(audio.Get());
 	WAVEFORMATEXTENSIBLE* corre = nullptr;
 	{
-		hr = audio->IsFormatSupported(AUDCLNT_SHAREMODE(audioType), (WAVEFORMATEX*)fmt, (WAVEFORMATEX * *)& corre);
+		hr = audio->IsFormatSupported(AUDCLNT_SHAREMODE(audioType), (WAVEFORMATEX*)fmt, (WAVEFORMATEX**)&corre);
 		if (hr == S_OK)
 		{
-			info.sample  = fmt->Format.nSamplesPerSec;
-			info.byte    = unsigned char(fmt->Format.wBitsPerSample / 8);
+			info.sample = 44100; fmt->Format.nSamplesPerSec;
+			info.byte = 4; unsigned char(fmt->Format.wBitsPerSample / 8);
 			info.channel = unsigned char(fmt->Format.nChannels);
 			info.flag    = (fmt->SubFormat == KSDATAFORMAT_SUBTYPE_PCM) ? 0 : 1;
 		}
@@ -225,7 +225,7 @@ void OkdioEngine::Initialize(void)
 
 	//初期化
 	hr = audio->Initialize(AUDCLNT_SHAREMODE(audioType), AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST,
-		defPeriod, defPeriod * int(audioType), (WAVEFORMATEX*)& fmt, nullptr);
+		defPeriod, defPeriod * int(audioType), (WAVEFORMATEX*)&fmt, nullptr);
 	//アライメントされていない場合
 	if (hr == AUDCLNT_E_BUFFER_SIZE_NOT_ALIGNED)
 	{
@@ -237,7 +237,7 @@ void OkdioEngine::Initialize(void)
 
 		//再挑戦
 		hr = audio->Initialize(_AUDCLNT_SHAREMODE(audioType), AUDCLNT_STREAMFLAGS_EVENTCALLBACK | AUDCLNT_STREAMFLAGS_NOPERSIST,
-			defPeriod, defPeriod * int(audioType), (WAVEFORMATEX*)& fmt, nullptr);
+			defPeriod, defPeriod * int(audioType), (WAVEFORMATEX*)&fmt, nullptr);
 	}
 	_ASSERT(hr == S_OK);
 
@@ -339,16 +339,21 @@ void OkdioEngine::Stream(void)
 	auto wave1 = SoundLoader::Get().GetWave(name);
 	auto waveInfo = SoundLoader::Get().GetInfo(name);
 	std::vector<float>wave2(wave1->size() / (waveInfo.byte));
-	short* ptr = (short*)wave1->data();
+	auto* ptr = (short*)wave1->data();
 	for (size_t i = 0; i < wave2.size(); ++i)
 	{
 		wave2[i] = okmonn::Normalize<float>(ptr[i]);
 	}
-	auto a = okmonn::DFT(std::vector<double>(123, 0));
+	std::vector<int>in(wave2.size());
+	for (size_t i = 0; i < in.size(); ++i)
+	{
+		in[i] = wave2[i] * (0xffff / 2) * 0xffff;
+	}
 	unsigned int index = 0;
+	/*auto a = okmonn::DFT(std::vector<double>(123, 0));
 	auto param = okmonn::GetConvertParam(waveInfo.sample, info.sample);
 	wave2 = Resampling(*SoundLoader::Get().GetConvertCorre(name), param, wave2, waveInfo);
-
+	*/
 	unsigned __int32 fream = 0;
 	auto hr = audio->GetBufferSize(&fream);
 	_ASSERT(hr == S_OK);
@@ -380,7 +385,7 @@ void OkdioEngine::Stream(void)
 			size = wave2.size() - index;
 		}
 
-		memcpy(data, &wave2[index], sizeof(wave2[0]) * size);
+		memcpy(data, &in[index], sizeof(in[0]) * size);
 
 		hr = render->ReleaseBuffer(fream - padding, 0);
 		_ASSERT(hr == S_OK);

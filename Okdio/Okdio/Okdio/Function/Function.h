@@ -47,9 +47,11 @@ namespace okmonn
 	// •W–{‰»ŠÖ”
 	std::vector<double> Sinc(const unsigned char& siderope, const unsigned short& degree, const ConvertParam& param);
 
+	// 8bit‚©‚ç32bit-float
 	template <typename T>
 	T Normalize(const unsigned char& val);
 
+	// 16bit‚©‚ç32bit-float
 	template <typename T>
 	T Normalize(const short& val);
 
