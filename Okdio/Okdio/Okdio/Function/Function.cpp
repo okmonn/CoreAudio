@@ -214,6 +214,12 @@ double okmonn::Kaizer(const unsigned char& siderope)
 	return 0.0;
 }
 
+// ハニング窓
+double okmonn::Hanning(const unsigned int& n, const size_t& num)
+{
+	return 0.5 - 0.5 * std::cos(2.0 * std::acos(-1.0) * n / num);
+}
+
 // 第1種ベッセル関数
 double okmonn::Vessel(const double& val)
 {

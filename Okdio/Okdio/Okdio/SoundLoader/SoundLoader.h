@@ -12,7 +12,7 @@ class SoundLoader :
 		//サウンド情報
 		okmonn::AudioInfo info;
 		//サウンドデータ
-		std::shared_ptr<std::vector<unsigned char>>wave;
+		std::shared_ptr<std::vector<float>>wave;
 	};
 
 	struct Convert {
@@ -37,7 +37,7 @@ public:
 	okmonn::AudioInfo GetInfo(const std::string& fileName);
 
 	// サウンドデータ取得
-	std::shared_ptr<std::vector<unsigned char>> GetWave(const std::string& fileName);
+	std::shared_ptr<std::vector<float>> GetWave(const std::string& fileName);
 
 	// サウンドデータ数取得
 	size_t GetWaveNum(const std::string& fileName);

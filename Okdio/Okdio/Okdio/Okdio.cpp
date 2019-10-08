@@ -31,7 +31,7 @@ okmonn::AudioInfo Okdio::GetInfo(void) const
 }
 
 // サウンドデータ取得
-std::weak_ptr<std::vector<unsigned char>> Okdio::GetWave(void) const
+std::weak_ptr<std::vector<float>> Okdio::GetWave(void) const
 {
 	return SoundLoader::Get().GetWave(name);
 }

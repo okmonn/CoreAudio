@@ -177,8 +177,8 @@ void OkdioEngine::CreateAudioClient(void)
 		hr = audio->IsFormatSupported(AUDCLNT_SHAREMODE(audioType), (WAVEFORMATEX*)fmt, (WAVEFORMATEX**)&corre);
 		if (hr == S_OK)
 		{
-			info.sample = 44100; fmt->Format.nSamplesPerSec;
-			info.byte = 4; unsigned char(fmt->Format.wBitsPerSample / 8);
+			info.sample  = fmt->Format.nSamplesPerSec;
+			info.byte    = unsigned char(fmt->Format.wBitsPerSample / 8);
 			info.channel = unsigned char(fmt->Format.nChannels);
 			info.flag    = (fmt->SubFormat == KSDATAFORMAT_SUBTYPE_PCM) ? 0 : 1;
 		}
@@ -331,23 +331,133 @@ std::vector<float> Resampling(const std::vector<double>& corre, const okmonn::Co
 	return convert;
 }
 
+void BPM(const std::vector<float>& data, const okmonn::AudioInfo& info)
+{
+	//1フレームのサンプル数
+	unsigned int sample = 512 * info.channel;
+	//フレーム数
+	unsigned int fream = data.size() / sample;
+	//1フレームのサンプリング周波数
+	double freamSample = double(info.sample) / double(sample);
+
+	//フレームごとの音量
+	std::vector<double>vol(fream);
+	{
+		for (unsigned int i = 0; i < fream; ++i)
+		{
+			double tmp = 0;
+			for (unsigned int n = 0; n < sample; ++n)
+			{
+				tmp += std::pow(data[i * sample + n], 2);
+			}
+			vol[i] = std::sqrt(tmp / sample);
+		}
+	}
+
+	//隣り合うフレームの増加量を求める
+	std::vector<double>incre(fream);
+	{
+		for (unsigned int i = 1; i < fream; ++i)
+		{
+			incre[i - 1] = vol[i] - vol[i - 1];
+			if (incre[i - 1] < 0.0)
+			{
+				incre[i - 1] = 0.0;
+			}
+		}
+	}
+
+	//増加量の時間変化の周波数成分を求める
+	std::vector<std::vector<double>>bpm(3, std::vector<double>(240 - 60 + 1, 0));
+	{
+		for (size_t i = 0; i < bpm[0].size(); ++i)
+		{
+			double fbpm = double(60LL + i) / 60.0;
+			for (unsigned int n = 0; n < fream; ++n)
+			{
+				double winFunc = okmonn::Hanning(n, fream);
+				bpm[0][i] += incre[n] * std::cos(2.0 * std::acos(-1.0) * fbpm * n / freamSample) * winFunc;
+				bpm[1][i] += incre[n] * std::sin(2.0 * std::acos(-1.0) * fbpm * n / freamSample) * winFunc;
+			}
+			bpm[0][i] /= sample;
+			bpm[1][i] /= sample;
+			bpm[2][i] = std::sqrt(std::pow(bpm[0][i], 2) + std::pow(bpm[1][i], 2));
+		}
+	}
+
+	//ピーク検出
+	std::vector<int>peak(3, -1);
+	{
+		for (unsigned int i = 1; i < bpm[0].size(); ++i)
+		{
+			for (size_t n = 0; n < peak.size(); ++n)
+			{
+				if (peak[n] < 0 || bpm[0][i - 1] > bpm[0][peak[n]])
+				{
+					for (size_t m = n + 1; m < peak.size(); ++m)
+					{
+						std::swap(peak[m - 1], peak[m]);
+					}
+					peak[n] = i - 1;
+					break;
+				}
+			}
+		}
+	}
+
+	double start_n;
+	double beat_gap;
+	for (int idx = 0; idx < 3; idx++)
+	{
+		if (peak[idx] < 0)
+		{
+			break;
+		}
+
+		printf("[%d]\n", idx + 1);
+
+		int peak_bpm = peak[idx] + 60;
+		printf("peak bmp : %d\n", peak_bpm);
+
+		// 位相差
+		double theta = atan2(bpm[1][peak[idx]], bpm[0][peak[idx]]);
+		if (theta < 0)
+		{
+			theta += 2.0 * std::acos(-1.0);
+		}
+		double peak_f = double(peak_bpm) / 60;
+		double start_time = theta / (2.0 * std::acos(-1.0) * peak_f);
+		double start_beat = theta / (2.0 * std::acos(-1.0));
+		printf("first beat time : %f sec\n", start_time);
+		printf("first beat : %f beat\n", start_beat);
+
+		double ajust_beat = (2.0 * std::acos(-1.0) - theta) / (2.0 * std::acos(-1.0));
+		int ajust_beat1 = int(ajust_beat * 4) % 4;
+		int ajust_beat2 = int(ajust_beat * 4 * 120) % 120;
+		printf("ajust beat for cubase : 1 . 1 . %d . %d\n", ajust_beat1 + 1, ajust_beat2);
+
+		// 泊位置
+		if (idx == 0)
+		{
+			start_n = int(start_time * freamSample);
+			beat_gap = freamSample / peak_f;
+		}
+	}
+}
+
 // 非同期処理
 void OkdioEngine::Stream(void)
 {
-	std::string name = "SOS.wav";
+	std::string name = "INSIDE.wav";
 	auto q = SoundLoader::Get().Load(name);
 	auto wave1 = SoundLoader::Get().GetWave(name);
 	auto waveInfo = SoundLoader::Get().GetInfo(name);
-	std::vector<float>wave2(wave1->size() / (waveInfo.byte));
-	auto* ptr = (short*)wave1->data();
-	for (size_t i = 0; i < wave2.size(); ++i)
-	{
-		wave2[i] = okmonn::Normalize<float>(ptr[i]);
-	}
-	std::vector<int>in(wave2.size());
+	BPM(*wave1, waveInfo);
+	
+	std::vector<int>in(wave1->size());
 	for (size_t i = 0; i < in.size(); ++i)
 	{
-		in[i] = wave2[i] * (0xffff / 2) * 0xffff;
+		in[i] = wave1->at(i) * (0xffff / 2) * 0xffff;
 	}
 	unsigned int index = 0;
 	/*auto a = okmonn::DFT(std::vector<double>(123, 0));
@@ -380,9 +490,9 @@ void OkdioEngine::Stream(void)
 
 		//データのコピー
 		unsigned int size = (fream - padding) * info.channel;
-		if (index + size >= wave2.size())
+		if (index + size >= wave1->size())
 		{
-			size = wave2.size() - index;
+			size = wave1->size()  - index;
 		}
 
 		memcpy(data, &in[index], sizeof(in[0]) * size);
@@ -391,7 +501,7 @@ void OkdioEngine::Stream(void)
 		_ASSERT(hr == S_OK);
 
 		index += (fream - padding) * info.channel;
-		if (wave2.size() <= index)
+		if (wave1->size() <= index)
 		{
 			index = 0;
 		}

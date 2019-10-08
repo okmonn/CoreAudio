@@ -13,7 +13,7 @@ public:
 	okmonn::AudioInfo GetInfo(void) const;
 
 	// サウンドデータ取得
-	std::weak_ptr<std::vector<unsigned char>> GetWave(void) const;
+	std::weak_ptr<std::vector<float>> GetWave(void) const;
 
 	// サウンドデータ数取得
 	size_t GetWaveNum(void) const;

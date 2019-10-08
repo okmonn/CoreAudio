@@ -1,7 +1,6 @@
 #pragma once
-#include "../Information.h"
+#include "../Function/Function.h"
 #include <string>
-#include <vector>
 #include <memory>
 
 namespace wav
@@ -39,7 +38,7 @@ namespace wav
 	};
 
 	// 読み込み
-	long Load(const std::string& fileName, okmonn::AudioInfo& info, std::shared_ptr<std::vector<unsigned char>>& data)
+	long Load(const std::string& fileName, okmonn::AudioInfo& info, std::shared_ptr<std::vector<float>>& data)
 	{
 		FILE* file = nullptr;
 		if (fopen_s(&file, fileName.c_str(), "rb") != 0)
@@ -88,7 +87,33 @@ namespace wav
 
 		//波形データ読み込み
 		info = okmonn::AudioInfo(unsigned int(fmt.sample), unsigned char(fmt.bit / 8), unsigned char(fmt.channel), 0);
-		data = std::make_shared<std::vector<unsigned char>>(size);
+		data = std::make_shared<std::vector<float>>(size / info.byte);
+		switch (info.byte)
+		{
+		case 1:
+		{
+			unsigned char tmp = 0;
+			for (float& i : *data)
+			{
+				fread_s(&tmp, sizeof(tmp), sizeof(tmp), 1, file);
+				i = okmonn::Normalize<float>(tmp);
+			}
+			break;
+		}
+		case 2:
+		{
+			short tmp = 0;
+			for (float& i : *data)
+			{
+				fread_s(&tmp, sizeof(tmp), sizeof(tmp), 1, file);
+				i = okmonn::Normalize<float>(tmp);
+			}
+		}
+			break;
+		default:
+			break;
+		}
+
 		fread_s(data->data(), size, size, 1, file);
 
 		//終了

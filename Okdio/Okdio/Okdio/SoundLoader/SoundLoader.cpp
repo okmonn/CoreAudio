@@ -1,11 +1,10 @@
 #include "SoundLoader.h"
 #include "../Format/WavFormat.h"
-#include "../Function/Function.h"
 #include <functional>
 
 namespace
 {
-	std::unordered_map<std::string, std::function<int(const std::string&, okmonn::AudioInfo&, std::shared_ptr<std::vector<unsigned char>>&)>>func = {
+	std::unordered_map<std::string, std::function<int(const std::string&, okmonn::AudioInfo&, std::shared_ptr<std::vector<float>>&)>>func = {
 		{"wav", std::bind(&wav::Load, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)}
 	};
 }
@@ -83,7 +82,7 @@ okmonn::AudioInfo SoundLoader::GetInfo(const std::string& fileName)
 }
 
 // サウンドデータ取得
-std::shared_ptr<std::vector<unsigned char>> SoundLoader::GetWave(const std::string& fileName)
+std::shared_ptr<std::vector<float>> SoundLoader::GetWave(const std::string& fileName)
 {
 	if (sound.find(fileName) != sound.end())
 	{
