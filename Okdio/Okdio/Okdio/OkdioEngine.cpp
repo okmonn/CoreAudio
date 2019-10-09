@@ -282,7 +282,6 @@ std::vector<float> Resampling(const std::vector<double>& corre, const okmonn::Co
 	unsigned int offset = (corre.size() - 1) / 2;
 	unsigned int index = 0;
 	double gap = param.gap;
-	unsigned int a = 0;
 	while (index < convert.size())
 	{
 		double integer = 0.0;
@@ -322,7 +321,10 @@ std::vector<float> Resampling(const std::vector<double>& corre, const okmonn::Co
 		//ÉQÉCÉìí≤êﬂ
 		for (unsigned char ch = 0; ch < info.channel; ++ch)
 		{
-			convert[index + ch] *= param.rate - 0.2f;
+			if (index + ch < convert.size())
+			{
+				convert[index + ch] *= param.rate - 0.2f;
+			}
 		}
 		index += info.channel;
 		gap += param.gap;
@@ -445,6 +447,11 @@ void BPM(const std::vector<float>& data, const okmonn::AudioInfo& info)
 	}
 }
 
+std::vector<float> PSOLA(const std::vector<float>& data, const okmonn::AudioInfo& info)
+{
+
+}
+
 // îÒìØä˙èàóù
 void OkdioEngine::Stream(void)
 {
@@ -453,17 +460,14 @@ void OkdioEngine::Stream(void)
 	auto wave1 = SoundLoader::Get().GetWave(name);
 	auto waveInfo = SoundLoader::Get().GetInfo(name);
 	BPM(*wave1, waveInfo);
-	
-	std::vector<int>in(wave1->size());
+	auto param = okmonn::GetConvertParam(waveInfo.sample, info.sample);
+	auto wave2 = Resampling(*SoundLoader::Get().GetConvertCorre(name), param, *wave1, waveInfo);
+	std::vector<int>in(wave2.size());
 	for (size_t i = 0; i < in.size(); ++i)
 	{
-		in[i] = wave1->at(i) * (0xffff / 2) * 0xffff;
+		in[i] = wave2[i] * (0xffff / 2) * 0xffff;
 	}
 	unsigned int index = 0;
-	/*auto a = okmonn::DFT(std::vector<double>(123, 0));
-	auto param = okmonn::GetConvertParam(waveInfo.sample, info.sample);
-	wave2 = Resampling(*SoundLoader::Get().GetConvertCorre(name), param, wave2, waveInfo);
-	*/
 	unsigned __int32 fream = 0;
 	auto hr = audio->GetBufferSize(&fream);
 	_ASSERT(hr == S_OK);
@@ -495,7 +499,7 @@ void OkdioEngine::Stream(void)
 			size = wave1->size()  - index;
 		}
 
-		memcpy(data, &in[index], sizeof(in[0]) * size);
+		memcpy(data, &wave2[index], sizeof(wave2[0]) * size);
 
 		hr = render->ReleaseBuffer(fream - padding, 0);
 		_ASSERT(hr == S_OK);
