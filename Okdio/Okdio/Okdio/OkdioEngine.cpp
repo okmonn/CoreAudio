@@ -447,21 +447,67 @@ void BPM(const std::vector<float>& data, const okmonn::AudioInfo& info)
 	}
 }
 
-std::vector<float> PSOLA(const std::vector<float>& data, const okmonn::AudioInfo& info)
+std::vector<float> PSOLA(const std::vector<float>& data, const okmonn::AudioInfo& info, const float& rate)
 {
+	//相関関数範囲
+	const unsigned int size = (info.sample * 0.01) * info.channel;
+	//ずれ最小値
+	const unsigned int min  = size / 2;
+	//ずれ最大値
+	const unsigned int max  = size * 2;
 
+	std::vector<float>convert;
+
+	unsigned int offset0 = 0;
+	unsigned int offset1 = 0;
+
+	while (offset0 + max < data.size())
+	{
+		//自己相関
+		float peak = 0.0;
+		int index = min;
+		for (unsigned int i = min; i <= max; ++i)
+		{
+			float tmp = 0.0f;
+			for (unsigned int n = 0; n < size; ++n)
+			{
+				tmp += data[n] * data[i + n];
+			}
+
+			//ピーク値更新
+			if (peak < tmp)
+			{
+				peak = tmp;
+				index = i;
+			}
+		}
+
+		int tmp = index * rate;
+
+		//切り取り
+		for (int i = -tmp / 2; i < tmp / 2; ++i)
+		{
+			convert.push_back(data[offset0 + index + i]);
+		}
+
+		offset0 += index;
+	}
+
+	return convert;
 }
 
 // 非同期処理
 void OkdioEngine::Stream(void)
 {
-	std::string name = "INSIDE.wav";
+	std::string name = "Demo1_b.wav";
 	auto q = SoundLoader::Get().Load(name);
-	auto wave1 = SoundLoader::Get().GetWave(name);
+	auto wave1 = *SoundLoader::Get().GetWave(name);
 	auto waveInfo = SoundLoader::Get().GetInfo(name);
-	BPM(*wave1, waveInfo);
+	BPM(wave1, waveInfo);
+	auto wave2 = PSOLA(wave1, waveInfo, 2.0f);
+	waveInfo.sample = waveInfo.sample * 2.0f;
 	auto param = okmonn::GetConvertParam(waveInfo.sample, info.sample);
-	auto wave2 = Resampling(*SoundLoader::Get().GetConvertCorre(name), param, *wave1, waveInfo);
+	wave2 = Resampling(*SoundLoader::Get().GetConvertCorre(name), param, wave2, waveInfo);
 	std::vector<int>in(wave2.size());
 	for (size_t i = 0; i < in.size(); ++i)
 	{
@@ -494,9 +540,9 @@ void OkdioEngine::Stream(void)
 
 		//データのコピー
 		unsigned int size = (fream - padding) * info.channel;
-		if (index + size >= wave1->size())
+		if (index + size >= wave2.size())
 		{
-			size = wave1->size()  - index;
+			size = wave2.size()  - index;
 		}
 
 		memcpy(data, &wave2[index], sizeof(wave2[0]) * size);
@@ -505,7 +551,7 @@ void OkdioEngine::Stream(void)
 		_ASSERT(hr == S_OK);
 
 		index += (fream - padding) * info.channel;
-		if (wave1->size() <= index)
+		if (wave2.size() <= index)
 		{
 			index = 0;
 		}
