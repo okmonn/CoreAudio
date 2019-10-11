@@ -499,7 +499,7 @@ std::vector<float> PSOLA(const std::vector<float>& data, const okmonn::AudioInfo
 // ”ñ“¯Šúˆ—
 void OkdioEngine::Stream(void)
 {
-	std::string name = "Demo1_b.wav";
+	std::string name = "SOS.wav";
 	auto q = SoundLoader::Get().Load(name);
 	auto wave1 = *SoundLoader::Get().GetWave(name);
 	auto waveInfo = SoundLoader::Get().GetInfo(name);
