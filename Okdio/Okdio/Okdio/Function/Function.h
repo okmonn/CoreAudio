@@ -42,7 +42,8 @@ namespace okmonn
 	double Kaizer(const unsigned char& siderope);
 
 	// ハニング窓
-	double Hanning(const unsigned int& n, const size_t& num);
+	template <typename T>
+	T Hanning(const unsigned int& n, const size_t& num);
 
 	// 第1種ベッセル関数
 	double Vessel(const double& val);

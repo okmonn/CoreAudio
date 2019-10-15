@@ -377,7 +377,7 @@ void BPM(const std::vector<float>& data, const okmonn::AudioInfo& info)
 			double fbpm = double(60LL + i) / 60.0;
 			for (unsigned int n = 0; n < fream; ++n)
 			{
-				double winFunc = okmonn::Hanning(n, fream);
+				double winFunc = okmonn::Hanning<float>(n, fream);
 				bpm[0][i] += incre[n] * std::cos(2.0 * std::acos(-1.0) * fbpm * n / freamSample) * winFunc;
 				bpm[1][i] += incre[n] * std::sin(2.0 * std::acos(-1.0) * fbpm * n / freamSample) * winFunc;
 			}
@@ -456,7 +456,7 @@ std::vector<float> PSOLA(const std::vector<float>& data, const okmonn::AudioInfo
 	//ずれ最大値
 	const unsigned int max  = size * 2;
 
-	std::vector<float>convert;
+	std::vector<float>convert(data.size() * 2);
 
 	unsigned int offset0 = 0;
 	unsigned int offset1 = 0;
@@ -477,20 +477,34 @@ std::vector<float> PSOLA(const std::vector<float>& data, const okmonn::AudioInfo
 			//ピーク値更新
 			if (peak < tmp)
 			{
-				peak = tmp;
+				peak  = tmp;
 				index = i;
 			}
 		}
 
 		int tmp = index * rate;
-
-		//切り取り
-		for (int i = -tmp / 2; i < tmp / 2; ++i)
+		std::vector<float>cut(&data[offset0 + index - tmp / 2], &data[offset0 + index + tmp / 2]);
+		for (size_t i = 0; i < cut.size(); ++i)
 		{
-			convert.push_back(data[offset0 + index + i]);
+			cut[i] *= okmonn::Hanning<float>(i, cut.size());
 		}
 
+		for (size_t i = 0; i < cut.size(); ++i)
+		{
+			if (int(offset1 - cut.size() / 2 + i) >= 0)
+			{
+				convert[offset1 - cut.size() / 2 + i] += cut[i];
+			}
+		}
+
+		//切り取り
+		/*for (int i = -tmp / 2; i < tmp / 2; ++i)
+		{
+			convert.push_back(data[offset0 + index + i]);
+		}*/
+
 		offset0 += index;
+		offset1 += cut.size() / 2;
 	}
 
 	return convert;
