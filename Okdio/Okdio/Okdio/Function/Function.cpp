@@ -315,8 +315,8 @@ std::vector<std::complex<T>> okmonn::DFT(const std::vector<T>& data)
 	{
 		for (size_t n = 0; n < comp.size(); ++n)
 		{
-			//comp[i] += data[n] * std::exp(-Imaginary * T(2.0) * std::acos(T(-1.0)) * T(i) * T(n) / T(comp.size()));
-			comp[i] += std::cos(T(2.0) * std::acos(T(-1.0)) * T(i * n) / T(data.size())) - (Imaginary * std::sin(T(2.0) * std::acos(T(-1.0)) * T(i * n) / T(data.size())));
+			comp[i] += data[n] * std::exp(-Imaginary * T(2.0) * std::acos(T(-1.0)) * T(i) * T(n) / T(comp.size()));
+			//comp[i] += std::cos(T(2.0) * std::acos(T(-1.0)) * T(i * n) / T(data.size())) - (Imaginary * std::sin(T(2.0) * std::acos(T(-1.0)) * T(i * n) / T(data.size())));
 		}
 	}
 
