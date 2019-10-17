@@ -483,7 +483,7 @@ std::vector<float> PSOLA(const std::vector<float>& data, const okmonn::AudioInfo
 		}
 
 		int tmp = index * rate;
-		std::vector<float>cut(&data[offset0 + index - tmp], &data[offset0 + index + tmp]);
+		std::vector<float>cut(&data[std::fmax(offset0 + index - tmp, 0)], &data[offset0 + index + tmp]);
 		for (size_t i = 0; i < cut.size(); ++i)
 		{
 			cut[i] *= okmonn::Hanning<float>(i, cut.size());
