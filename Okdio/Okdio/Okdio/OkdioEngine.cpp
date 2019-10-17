@@ -493,22 +493,9 @@ std::vector<float> PSOLA(const std::vector<float>& data, const okmonn::AudioInfo
 		{
 			convert[offset1 + i] += cut[i];
 		}
-		/*for (size_t i = 0; i < cut.size(); ++i)
-		{
-			if (int(offset1 - cut.size() / 2 + i) >= 0)
-			{
-				convert[offset1 - cut.size() / 2 + i] += cut[i];
-			}
-		}*/
-
-		//êÿÇËéÊÇË
-		/*for (int i = -tmp / 2; i < tmp / 2; ++i)
-		{
-			convert.push_back(data[offset0 + index + i]);
-		}*/
 
 		offset0 += index;
-		offset1 += cut.size();
+		offset1 += cut.size() / 2;
 	}
 
 	return convert;
