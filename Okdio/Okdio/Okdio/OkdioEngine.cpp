@@ -509,8 +509,8 @@ void OkdioEngine::Stream(void)
 	auto wave1 = *SoundLoader::Get().GetWave(name);
 	auto waveInfo = SoundLoader::Get().GetInfo(name);
 	BPM(wave1, waveInfo);
-	auto wave2 = PSOLA(wave1, waveInfo, 2.0f);
-	waveInfo.sample = waveInfo.sample * 2.0f;
+	auto wave2 = PSOLA(wave1, waveInfo, 0.5f);
+	waveInfo.sample = waveInfo.sample * 0.5f;
 	auto param = okmonn::GetConvertParam(waveInfo.sample, info.sample);
 	wave2 = Resampling(*SoundLoader::Get().GetConvertCorre(name), param, wave2, waveInfo);
 	std::vector<int>in(wave2.size());
