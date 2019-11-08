@@ -1,69 +1,62 @@
 #pragma once
-#include "../Information.h"
+#include "../Infomatin.h"
 #include <vector>
 #include <complex>
 
 struct _GUID;
 typedef _GUID GUID;
+class OkdioEngine;
 
 namespace okmonn
 {
 	// OkdioEngine生成
-	long CreateOkdioEngine(const okmonn::AudioDeviceType& devType, const okmonn::AudioType& audioType, const GUID& id, void** obj);
+	bool CreateEngine(const okmonn::AudioDevType& devType, const okmonn::AudioType& audioType, const GUID& id, void** engine, const int devIndex = -1);
 
 	// ユニコード文字からマルチバイト文字に変換
-	std::string ChangeCode(const std::wstring& wstr);
-
-	// GPUメモリ確保
-	long CudaMelloc(void** ptr, const size_t& size);
-
-	// CPUメモリからGPUメモリにコピー
-	long CudaCopyToGPU(void** ptr, void* data, const size_t& size);
-	
-	// GPUメモリからCPUメモリにコピー
-	long CudaCopyToCPU(void** ptr, void* data, const size_t& size);
-
-	// GPUメモリ解放
-	long CudaFree(void** ptr);
+	std::string ChangeCode(const std::wstring& st);
 
 	// オーディオデバイス情報取得
-	std::vector<AudioDeviceProp> GetAudioDeviceProp(const AudioDeviceType& type);
-
-	// サンプリング周波数変換用次数の取得
-	unsigned short GetDegree(const unsigned char& siderope, const ConvertParam& param);
-
-	// サンプリング周波数変換用パラメータの取得
-	ConvertParam GetConvertParam(const unsigned int& befor, const unsigned int& affter);
+	std::vector<AudioDevProp> GetAudioDevProp(const AudioDevType& type);
 
 	// 階乗
-	unsigned int Factorial(const unsigned int& n);
+	unsigned int Factorial(const unsigned int& val);
 
-	// カイザー窓関数
-	double Kaizer(const unsigned char& siderope);
-
-	// ハニング窓
-	template <typename T>
-	T Hanning(const unsigned int& n, const size_t& num);
-
-	// 第1種ベッセル関数
+	// 第一種ベッセル関数
 	double Vessel(const double& val);
 
 	// 標本化関数
-	std::vector<double> Sinc(const unsigned char& siderope, const unsigned short& degree, const ConvertParam& param);
+	std::vector<double> Sinc(const unsigned char& siderope, const unsigned short& degree, const SampleParam& param);
 
-	// 8bitから32bit-float
+	// 理想次数の取得
+	unsigned short GetDegree(const unsigned char& siderope, const SampleParam& param);
+
+	// サンプリング周波数変換パラメータ取得
+	SampleParam GetParam(const unsigned int& befor, const unsigned int& after);
+
+	// ハニング窓関数
 	template <typename T>
-	T Normalize(const unsigned char& val);
+	T Hanning(const size_t& index, const size_t& num);
 
-	// 16bitから32bit-float
+	// カイザー窓関数
 	template <typename T>
-	T Normalize(const short& val);
+	T Kaizer(const unsigned char& siderope);
 
-	// 32bit-floatから8bit-unsigned char
-	unsigned char FloatToChar(const float& val);
+	// リサンプリング
+	template <typename T>
+	std::vector<T> ReSampling(const std::vector<double>& corre, const SampleParam& param, const std::vector<T>& data, const SoundInfo& info);
 
-	// 32bit-floatから16bit-short
-	short FloatToShort(const float& val);
+	// PSOLA
+	template <typename T>
+	std::vector<T> PSOLA(const std::vector<T>& data, const okmonn::SoundInfo& info, const T& rate);
+
+	// 正規化
+	// 値を-1～1に正規化する
+	template <typename T, typename M>
+	T Normalized(const M& val, const T& offset);
+
+	// 規格化
+	template <typename T, typename M>
+	T Standarded(const M& val, const size_t& size, const M& offset = 0);
 
 	// 離散フーリエ変換
 	template <typename T>

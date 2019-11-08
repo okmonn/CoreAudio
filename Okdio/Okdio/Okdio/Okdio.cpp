@@ -1,55 +1,90 @@
 #include "Okdio.h"
-#include "SoundLoader/SoundLoader.h"
+#include "Loader/Loader.h"
+#include "SoundBuffer/SoundBuffer.h"
+#include "OkdioList/OkdioList.h"
+
+// サウンドキュー最大数
+#define QUEUE_MAX 2
 
 // コンストラクタ
-Okdio::Okdio(const std::string& fileName) :
-	index(0), play(false), loop(false)
+Okdio::Okdio(const std::string& fileName) : 
+	read(0), play(false), loop(false), finish(false)
 {
-	if (SoundLoader::Get().Load(fileName) == 0)
-	{
-		name   = fileName;
-		offset = (SoundLoader::Get().GetConvertCorre(name)->size() - 1) / 2;
-		gap    = SoundLoader::Get().GetConvertParam(name).gap;
-	}
+	Load(fileName);
 }
 
 // デストラクタ
 Okdio::~Okdio()
 {
+	OkdioList::Get().DeleteList(this);
 }
 
-// サウンド参照ファイル名取得
-std::string Okdio::GetName(void) const
+// 読み込み
+void Okdio::Load(const std::string& fileName)
 {
-	return name;
+	auto hr = Loader::Get().Load(fileName);
+	if (hr == true)
+	{
+		name = fileName;
+		info = Loader::Get().GetInfo(name);
+	}
+}
+
+// 再生
+void Okdio::Play(const bool& loop)
+{
+	finish     = false;
+	play       = true;
+	this->loop = loop;
+}
+
+// 停止
+void Okdio::Stop(void)
+{
+	play = false;
+}
+
+// 波形データをサウンドキューに追加
+void Okdio::Submit(const size_t& num)
+{
+	if (play == true)
+	{
+		std::weak_ptr<std::vector<float>>wave = Loader::Get().GetWave(name);
+		size_t size = num;
+		if (read + size > wave.lock()->size())
+		{
+			size = (read + size) - wave.lock()->size();
+			SoundBuffer::Get().Submit(std::vector<float>(&wave.lock()->at(read), &wave.lock()->at(read + size)));
+			if (loop == false)
+			{
+				Stop();
+				finish = true;
+			}
+
+			read = 0;
+		}
+		else
+		{
+			SoundBuffer::Get().Submit(std::vector<float>(&wave.lock()->at(read), &wave.lock()->at(read + size)));
+			read += size;
+		}
+	}
 }
 
 // サウンド情報取得
-okmonn::AudioInfo Okdio::GetInfo(void) const
+okmonn::SoundInfo Okdio::GetInfo(void) const
 {
-	return SoundLoader::Get().GetInfo(name);
+	return info;
 }
 
-// サウンドデータ取得
-std::weak_ptr<std::vector<float>> Okdio::GetWave(void) const
+// サウンド情報セット
+void Okdio::SetInfo(const okmonn::SoundInfo& info)
 {
-	return SoundLoader::Get().GetWave(name);
+	this->info = info;
 }
 
-// サウンドデータ数取得
-size_t Okdio::GetWaveNum(void) const
+// 最後まで再生したか確認
+bool Okdio::IsFinish(void) const
 {
-	return SoundLoader::Get().GetWaveNum(name);
-}
-
-// サンプリング周波数変換パラメータ取得
-okmonn::ConvertParam Okdio::GetConvertParam(void) const
-{
-	return SoundLoader::Get().GetConvertParam(name);
-}
-
-// サンプリング周波数変換用係数取得
-std::weak_ptr<std::vector<double>> Okdio::GetConvertCorre(void) const
-{
-	return SoundLoader::Get().GetConvertCorre(name);
+	return finish;
 }

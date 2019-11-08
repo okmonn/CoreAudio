@@ -2,52 +2,60 @@
 #include "OkdioEngine.h"
 
 class __declspec(uuid("00000000-0917-0917-0917-000000000001"))
-	Okdio : public UnKnown<Okdio>
+	Okdio :
+	public okmonn::Unknown<Okdio>
 {
 	friend OkdioEngine;
+
 public:
-	// サウンド参照ファイル名取得
-	std::string GetName(void) const;
-
-	// サウンド情報取得
-	okmonn::AudioInfo GetInfo(void) const;
-
-	// サウンドデータ取得
-	std::weak_ptr<std::vector<float>> GetWave(void) const;
-
-	// サウンドデータ数取得
-	size_t GetWaveNum(void) const;
-
-	// サンプリング周波数変換パラメータ取得
-	okmonn::ConvertParam GetConvertParam(void) const;
-
-	// サンプリング周波数変換用係数取得
-	std::weak_ptr<std::vector<double>> GetConvertCorre(void) const;
-
-private:
-	void operator=(const Okdio&) = delete;
-
 	// コンストラクタ
 	Okdio(const std::string& fileName);
 	// デストラクタ
 	~Okdio();
 
-	// 参照サウンドファイル名
+	// 再生
+	void Play(const bool& loop = false);
+
+	// 停止
+	void Stop(void);
+
+	// サウンド情報取得
+	okmonn::SoundInfo GetInfo(void) const;
+
+	// サウンド情報セット
+	void SetInfo(const okmonn::SoundInfo& info);
+
+	// 最後まで再生したか確認
+	bool IsFinish(void) const;
+
+private:
+	// 読み込み
+	void Load(const std::string& fileName);
+
+	// 波形データをサウンドキューに追加
+	void Submit(const size_t& num);
+
+	Okdio* ptr(void)
+	{
+		return this;
+	}
+
+
+	// 参照ファイル名
 	std::string name;
 
-	// インデックス
-	unsigned int index;
+	// サウンド情報
+	okmonn::SoundInfo info;
 
-	// サンプリング周波数変換用オフセット
-	unsigned int offset;
-
-	// サンプリング周波数変換用ずれ
-	double gap;
+	// 読み込み位置
+	size_t read;
 
 	// 再生フラグ
 	bool play;
 
 	// ループフラグ
 	bool loop;
-};
 
+	// 終了フラグ
+	bool finish;
+};

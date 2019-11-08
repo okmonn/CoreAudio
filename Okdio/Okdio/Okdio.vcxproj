@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{5D8341E0-99AA-4F41-9363-FADE14712BA4}</ProjectGuid>
+    <ProjectGuid>{61633907-00ED-4D18-BB03-41CFC9F93935}</ProjectGuid>
     <RootNamespace>Okdio</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -53,7 +53,6 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 10.1.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -97,9 +96,6 @@
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
-    <CudaCompile>
-      <TargetMachinePlatform>64</TargetMachinePlatform>
-    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -112,9 +108,6 @@
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
-    <CudaCompile>
-      <TargetMachinePlatform>64</TargetMachinePlatform>
-    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -131,9 +124,6 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
-    <CudaCompile>
-      <TargetMachinePlatform>64</TargetMachinePlatform>
-    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -150,29 +140,29 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
-    <CudaCompile>
-      <TargetMachinePlatform>64</TargetMachinePlatform>
-    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Okdio\Function\Function.cpp" />
+    <ClCompile Include="Okdio\Loader\Loader.cpp" />
     <ClCompile Include="Okdio\Okdio.cpp" />
     <ClCompile Include="Okdio\OkdioEngine.cpp" />
-    <ClCompile Include="Okdio\SoundLoader\SoundLoader.cpp" />
+    <ClCompile Include="Okdio\OkdioList\OkdioList.cpp" />
+    <ClCompile Include="Okdio\SoundBuffer\SoundBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Okdio\ClassBase\Singleton.h" />
-    <ClInclude Include="Okdio\ClassBase\UnKnown.h" />
-    <ClInclude Include="Okdio\Format\WavFormat.h" />
+    <ClInclude Include="Okdio\Base\Singleton.h" />
+    <ClInclude Include="Okdio\Base\Unknown.h" />
+    <ClInclude Include="Okdio\Format\WavFmt.h" />
     <ClInclude Include="Okdio\Function\Function.h" />
-    <ClInclude Include="Okdio\Information.h" />
+    <ClInclude Include="Okdio\Infomatin.h" />
+    <ClInclude Include="Okdio\Loader\Loader.h" />
     <ClInclude Include="Okdio\Okdio.h" />
     <ClInclude Include="Okdio\OkdioEngine.h" />
-    <ClInclude Include="Okdio\SoundLoader\SoundLoader.h" />
+    <ClInclude Include="Okdio\OkdioList\OkdioList.h" />
+    <ClInclude Include="Okdio\SoundBuffer\SoundBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 10.1.targets" />
   </ImportGroup>
 </Project>

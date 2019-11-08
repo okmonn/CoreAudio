@@ -13,45 +13,66 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Loader">
+      <UniqueIdentifier>{2a359e55-33bc-459e-bb4d-65e7218c2632}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base">
+      <UniqueIdentifier>{4ddcf6d0-d26c-4ed7-bea5-b8ef77c9ae85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Format">
+      <UniqueIdentifier>{0a3dee2d-7a1b-444c-b1c3-d2f6978b81a8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Function">
-      <UniqueIdentifier>{560801a5-77e0-4d88-8898-039fd54bcaf5}</UniqueIdentifier>
+      <UniqueIdentifier>{ac3e030e-ab65-4db3-8ed5-dc9d384780a9}</UniqueIdentifier>
     </Filter>
     <Filter Include="OkdioEngine">
-      <UniqueIdentifier>{34cd234e-f6a0-4ec3-a85a-f366b4d165f3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ClassBase">
-      <UniqueIdentifier>{f73fbd29-46d5-4fcf-86aa-8444703141f6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SoundLoader">
-      <UniqueIdentifier>{05c15d63-9c1d-425d-b9b6-ff515ad66d6c}</UniqueIdentifier>
+      <UniqueIdentifier>{ac8b2ec6-57a9-4f4d-9ee4-8ba03fd67413}</UniqueIdentifier>
     </Filter>
     <Filter Include="Okdio">
-      <UniqueIdentifier>{493a9d6e-6052-4c08-baea-5a3c54f93e18}</UniqueIdentifier>
+      <UniqueIdentifier>{06388cb4-db93-4fb0-a4a8-6957a8dcaa25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoundBuffer">
+      <UniqueIdentifier>{be98897c-e7e8-42e8-a070-a85e0f2970d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OkdioList">
+      <UniqueIdentifier>{aa1f0034-296f-4132-8072-c3593bb97d83}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Okdio\Loader\Loader.cpp">
+      <Filter>Loader</Filter>
+    </ClCompile>
     <ClCompile Include="Okdio\Function\Function.cpp">
       <Filter>Function</Filter>
-    </ClCompile>
-    <ClCompile Include="Okdio\SoundLoader\SoundLoader.cpp">
-      <Filter>SoundLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="Okdio\Okdio.cpp">
-      <Filter>Okdio</Filter>
     </ClCompile>
     <ClCompile Include="Okdio\OkdioEngine.cpp">
       <Filter>OkdioEngine</Filter>
     </ClCompile>
+    <ClCompile Include="Okdio\Okdio.cpp">
+      <Filter>Okdio</Filter>
+    </ClCompile>
+    <ClCompile Include="Okdio\SoundBuffer\SoundBuffer.cpp">
+      <Filter>SoundBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Okdio\OkdioList\OkdioList.cpp">
+      <Filter>OkdioList</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Okdio\Format\WavFormat.h">
+    <ClInclude Include="Okdio\Loader\Loader.h">
+      <Filter>Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Okdio\Base\Singleton.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Okdio\Infomatin.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Okdio\Information.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Okdio\Format\WavFmt.h">
+      <Filter>Format</Filter>
     </ClInclude>
     <ClInclude Include="Okdio\Function\Function.h">
       <Filter>Function</Filter>
@@ -59,17 +80,17 @@
     <ClInclude Include="Okdio\OkdioEngine.h">
       <Filter>OkdioEngine</Filter>
     </ClInclude>
-    <ClInclude Include="Okdio\ClassBase\UnKnown.h">
-      <Filter>ClassBase</Filter>
-    </ClInclude>
-    <ClInclude Include="Okdio\ClassBase\Singleton.h">
-      <Filter>ClassBase</Filter>
-    </ClInclude>
-    <ClInclude Include="Okdio\SoundLoader\SoundLoader.h">
-      <Filter>SoundLoader</Filter>
-    </ClInclude>
     <ClInclude Include="Okdio\Okdio.h">
       <Filter>Okdio</Filter>
+    </ClInclude>
+    <ClInclude Include="Okdio\SoundBuffer\SoundBuffer.h">
+      <Filter>SoundBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Okdio\OkdioList\OkdioList.h">
+      <Filter>OkdioList</Filter>
+    </ClInclude>
+    <ClInclude Include="Okdio\Base\Unknown.h">
+      <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

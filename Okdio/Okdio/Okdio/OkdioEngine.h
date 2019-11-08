@@ -1,12 +1,10 @@
 #pragma once
-#include "ClassBase/UnKnown.h"
-#include "Information.h"
+#include "Base/Unknown.h"
 #include "Function/Function.h"
 #include <list>
 #include <wrl.h>
 #include <array>
 #include <mutex>
-#include <vector>
 #include <thread>
 
 struct IMMDevice;
@@ -15,64 +13,52 @@ struct IAudioRenderClient;
 class Okdio;
 
 class __declspec(uuid("00000000-0917-0917-0917-000000000000"))
-	OkdioEngine : public UnKnown<OkdioEngine>
+	OkdioEngine : 
+	public okmonn::Unknown<OkdioEngine>
 {
 public:
 	// コンストラクタ
-	OkdioEngine(const okmonn::AudioDeviceType& devType, const okmonn::AudioType& audioType, const char& deviceIndex = -1);
+	OkdioEngine(const okmonn::AudioDevType& devType, const okmonn::AudioType& audioType, const int& devIndex);
 	// デストラクタ
 	~OkdioEngine();
 
 	// Okdio生成
-	long CreateOkdio(const std::string& fileName, const GUID& id, void** obj);
+	bool CreateOkdio(const std::string& fileName, const GUID& id, void** okdio);
 
 	// 開始
-	void Start(void);
+	bool Start(void);
 
 	// 停止
-	void Stop(void);
+	bool Stop(void);
 
 private:
-	void operator=(const OkdioEngine&) = delete;
-
 	// オーディオデバイス生成
-	void CreateDevice(const char& deviceIndex);
-
-	// フォーマット設定
-	void* SetFormat(IAudioClient* audio, const okmonn::AudioInfo* info = nullptr);
+	void CreateDevice(const int& devIndex);
 
 	// オーディオクライアント生成
-	void CreateAudioClient(void);
+	void CreateAudio(void);
+
+	// フォーマット取得
+	void* GetFormat(okmonn::SoundInfo* info = nullptr);
 
 	// オーディオクライアント初期化
-	void Initialize(void);
+	void Initialized(void);
 
 	// オーディオレンダラー生成
-	void CreateAudioRender(void);
+	void CreateRender(void);
 
 	// 非同期処理
 	void Stream(void);
 
-	void TTT(std::vector<float>& data);
-
-
-	// オーディオデバイス
-	Microsoft::WRL::ComPtr<IMMDevice>device;
-
-	// オーディオクライアント
-	Microsoft::WRL::ComPtr<IAudioClient>audio;
-
-	// オーディオレンダラー
-	Microsoft::WRL::ComPtr<IAudioRenderClient>render;
 
 	// オーディオデバイスタイプ
-	okmonn::AudioDeviceType devType;
+	okmonn::AudioDevType devType;
 
 	// オーディオタイプ
 	okmonn::AudioType audioType;
 
-	// オーディオ情報
-	okmonn::AudioInfo info;
+	// サウンド情報
+	okmonn::SoundInfo info;
 
 	// 排他制御
 	std::mutex mtx;
@@ -80,9 +66,15 @@ private:
 	// スレッド
 	std::thread th;
 
+	// オーディオデバイス
+	Microsoft::WRL::ComPtr<IMMDevice>dev;
+
+	// オーディオクライアント
+	Microsoft::WRL::ComPtr<IAudioClient>audio;
+
+	// オーディオレンダラー
+	Microsoft::WRL::ComPtr<IAudioRenderClient>render;
+
 	// イベントハンドル
 	std::array<void*, 2>handle;
-
-	// Okdioリスト
-	std::list<Okdio*>okdio;
 };
