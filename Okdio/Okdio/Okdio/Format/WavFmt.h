@@ -2,6 +2,11 @@
 #include "../Function/Function.h"
 #include <memory>
 
+std::vector<float> Test(const std::vector<float>& data, const unsigned int& sample)
+{
+
+}
+
 namespace wav
 {
 	// RIFFƒ`ƒƒƒ“ƒN

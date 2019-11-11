@@ -20,37 +20,6 @@ Loader::~Loader()
 {
 }
 
-std::vector<float> Test(const std::vector<float>& data, const okmonn::SoundInfo& info)
-{
-	std::vector<float>tmp(data.size() * (double(48000) / double(info.sample)), 0);
-	for (size_t i = 0; i < tmp.size(); ++i)
-	{
-		double integer = 0.0;
-		double decimal = std::modf(i * double(info.sample) / double(48000), &integer);
-		
-		if (info.sample < 48000)
-		{
-			for (unsigned int n = 0; n < 100; ++n)
-			{
-				auto sinc = std::sin(std::acos(-1.0) * (n - decimal)) / (std::acos(-1.0) * (n - decimal));
-				tmp[i] += data[integer + n] * sinc;
-			}
-		}
-		else
-		{
-			for (unsigned int n = 0; n < 100; ++n)
-			{
-				auto sinc = std::sin(std::acos(-1.0) * (n - decimal) * (48000.0 / double(info.sample))) / (std::acos(-1.0) * (n - decimal) * (48000.0 / double(info.sample)));
-				tmp[i] += data[integer + n] * sinc;
-			}
-			tmp[i] /= double(44100) / double(info.sample);
-		}
-	}
-
-	return tmp;
-}
-
-// “Ç‚Ýž‚Ý
 bool Loader::Load(const std::string& fileName)
 {
 	if (sound.find(fileName) != sound.end())
