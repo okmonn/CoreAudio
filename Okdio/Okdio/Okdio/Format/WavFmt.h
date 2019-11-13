@@ -2,6 +2,12 @@
 #include "../Function/Function.h"
 #include <memory>
 
+/*
+振幅：std::sqrt(real * real + imag * imag)
+位相：std::atan2(imag / real);
+パワー：振幅 * 振幅
+*/
+
 std::vector<float> Test(const std::vector<float>& data, const unsigned int& sample)
 {
 	auto dft = okmonn::DFT(data);
@@ -10,8 +16,17 @@ std::vector<float> Test(const std::vector<float>& data, const unsigned int& samp
 	for (size_t i = 0; i < abs.size(); ++i)
 	{
 		abs[i] = std::sqrt(std::pow(dft[i].real(), 2) + std::pow(dft[i].imag(), 2));
-		
 	}
+	//対数
+	std::vector<float>log(abs.size());
+	for (size_t i = 0; i < log.size(); ++i)
+	{
+		log[i] = std::log10(abs[i] * abs[i]);
+	}
+	//ケプストラム
+	auto cepstrum = okmonn::DFT(log);
+
+	return std::vector<float>();
 }
 
 namespace wav
@@ -114,6 +129,13 @@ namespace wav
 					break;
 				}
 			}
+
+			//auto psola = okmonn::PSOLA(*wave, info, 2.0f);
+			auto param = okmonn::GetParam(info.sample, 48000);
+			auto degree = okmonn::GetDegree(100, param);
+			auto corre = okmonn::Sinc(100, degree, param);
+			auto re = okmonn::ReSampling(corre, param, *wave, info);
+			std::swap(*wave, re);
 
 			return true;
 		}

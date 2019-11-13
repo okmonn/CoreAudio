@@ -268,7 +268,7 @@ std::vector<T> okmonn::PSOLA(const std::vector<T>& data, const okmonn::SoundInfo
 	//Ç∏ÇÁÇµä‘äuç≈ëÂíl
 	const unsigned int max = size * 2;
 
-	std::vector<T>convert(data.size() * size_t(rate));
+	std::vector<T>convert(data.size() * rate);
 
 	unsigned int offset0 = 0;
 	unsigned int offset1 = 0;
@@ -297,7 +297,10 @@ std::vector<T> okmonn::PSOLA(const std::vector<T>& data, const okmonn::SoundInfo
 		std::vector<T>part(&data[size_t(std::fmin(offset0 + index - tmp, 0))], &data[offset0 + index + tmp]);
 		for (size_t i = 0; i < part.size(); ++i)
 		{
-			convert[offset1 + i] += part[i] * Hanning<T>(i, part.size());
+			if (offset1 + i < convert.size())
+			{
+				convert[offset1 + i] += part[i] * Hanning<T>(i, part.size());
+			}
 		}
 
 		offset0 += index;
