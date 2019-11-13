@@ -4,7 +4,14 @@
 
 std::vector<float> Test(const std::vector<float>& data, const unsigned int& sample)
 {
-
+	auto dft = okmonn::DFT(data);
+	//â‘Î’l
+	std::vector<float>abs(data.size());
+	for (size_t i = 0; i < abs.size(); ++i)
+	{
+		abs[i] = std::sqrt(std::pow(dft[i].real(), 2) + std::pow(dft[i].imag(), 2));
+		
+	}
 }
 
 namespace wav
