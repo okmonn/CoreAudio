@@ -317,7 +317,7 @@ template std::vector<float> okmonn::PSOLA(const std::vector<float>&, const okmon
 template<typename T, typename M>
 T okmonn::Normalized(const M& val, const T& offset)
 {
-	return (T(val) / T((std::pow(2, sizeof(M) * 8)) / 2)) + offset;
+	return (T(val) / T((std::pow(2, sizeof(M) * 8) - 1) / 2)) + offset;
 }
 template float okmonn::Normalized(const unsigned char&, const float&);
 template float okmonn::Normalized(const short&, const float&);
