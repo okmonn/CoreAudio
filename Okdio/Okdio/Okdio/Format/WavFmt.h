@@ -108,6 +108,14 @@ namespace wav
 					break;
 				}
 			}
+			
+			auto psola = okmonn::PSOLA(*wave, info, 0.5f);
+			info.sample /= 0.5f;
+			auto param = okmonn::GetParam(info.sample, 48000);
+			auto degree = okmonn::GetDegree(100, param);
+			auto corre = okmonn::Sinc(100, degree, param);
+			auto re = okmonn::ReSampling(corre, param, psola, info);
+			std::swap(*wave, re);
 
 			return true;
 		}
