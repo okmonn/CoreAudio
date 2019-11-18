@@ -110,47 +110,27 @@ void OkdioEngine::CreateAudio(void)
 }
 
 // フォーマット取得
-void* OkdioEngine::GetFormat(okmonn::SoundInfo* info)
+void* OkdioEngine::GetFormat(void)
 {
 	WAVEFORMATEXTENSIBLE* fmt = nullptr;
-	//オーディオデバイスのフォーマット
-	if (info == nullptr)
+	//共有モード
+	if (audioType == okmonn::AudioType::shared)
 	{
-		//共有モード
-		if (audioType == okmonn::AudioType::shared)
-		{
-			auto hr = audio->GetMixFormat((WAVEFORMATEX**)&fmt);
-			_ASSERT(hr == S_OK);
-		}
-		//排他モード
-		else
-		{
-			Microsoft::WRL::ComPtr<IPropertyStore>store = nullptr;
-			auto hr = dev->OpenPropertyStore(STGM_READ, &store);
-			_ASSERT(hr == S_OK);
-
-			PROPVARIANT variant{};
-			hr = store->GetValue(PKEY_AudioEngine_DeviceFormat, &variant);
-			_ASSERT(hr == S_OK);
-
-			fmt = (WAVEFORMATEXTENSIBLE*)variant.blob.pBlobData;
-		}
+		auto hr = audio->GetMixFormat((WAVEFORMATEX**)&fmt);
+		_ASSERT(hr == S_OK);
 	}
-	//指定フォーマット
+	//排他モード
 	else
 	{
-		fmt = new WAVEFORMATEXTENSIBLE();
-		fmt->Format.cbSize          = sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX);
-		fmt->Format.nSamplesPerSec  = info->sample;
-		fmt->Format.wBitsPerSample  = info->byte * 8;
-		fmt->Format.nChannels       = info->channel;
-		fmt->Format.nBlockAlign     = info->byte * info->channel;
-		fmt->Format.nAvgBytesPerSec = fmt->Format.nSamplesPerSec * fmt->Format.nBlockAlign;
-		fmt->Format.wFormatTag      = WAVE_FORMAT_EXTENSIBLE;
+		Microsoft::WRL::ComPtr<IPropertyStore>store = nullptr;
+		auto hr = dev->OpenPropertyStore(STGM_READ, &store);
+		_ASSERT(hr == S_OK);
 
-		fmt->dwChannelMask               = spk[fmt->Format.nChannels];
-		fmt->Samples.wValidBitsPerSample = fmt->Format.wBitsPerSample;
-		fmt->SubFormat = (info->flag == 0) ? KSDATAFORMAT_SUBTYPE_PCM : KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
+		PROPVARIANT variant{};
+		hr = store->GetValue(PKEY_AudioEngine_DeviceFormat, &variant);
+		_ASSERT(hr == S_OK);
+
+		fmt = (WAVEFORMATEXTENSIBLE*)variant.blob.pBlobData;
 	}
 
 	return fmt;
@@ -165,21 +145,20 @@ void OkdioEngine::Initialized(void)
 	auto hr = audio->IsFormatSupported(AUDCLNT_SHAREMODE(audioType), (WAVEFORMATEX*)fmt, (WAVEFORMATEX**)&corre);
 	if (SUCCEEDED(hr))
 	{
-		info.sample  = fmt->Format.nSamplesPerSec;
-		info.byte    = unsigned char(fmt->Format.wBitsPerSample / 8);
-		info.channel = unsigned char(fmt->Format.nChannels);
-		info.flag    = (fmt->SubFormat == KSDATAFORMAT_SUBTYPE_PCM) ? 0 : 1;
+		this->info.sample  = fmt->Format.nSamplesPerSec;
+		this->info.byte    = unsigned char(fmt->Format.wBitsPerSample / 8);
+		this->info.channel = unsigned char(fmt->Format.nChannels);
+		this->info.flag    = (fmt->SubFormat == KSDATAFORMAT_SUBTYPE_PCM) ? 0 : 1;
 	}
 	else
 	{
-		std::swap(fmt, corre);
 		hr = audio->IsFormatSupported(AUDCLNT_SHAREMODE(audioType), (WAVEFORMATEX*)fmt, nullptr);
 		_ASSERT(hr == S_OK);
 
-		info.sample  = fmt->Format.nSamplesPerSec;
-		info.byte    = unsigned char(fmt->Format.wBitsPerSample / 8);
-		info.channel = unsigned char(fmt->Format.nChannels);
-		info.flag    = (fmt->SubFormat == KSDATAFORMAT_SUBTYPE_PCM) ? 0 : 1;
+		this->info.sample  = fmt->Format.nSamplesPerSec;
+		this->info.byte    = unsigned char(fmt->Format.wBitsPerSample / 8);
+		this->info.channel = unsigned char(fmt->Format.nChannels);
+		this->info.flag    = (fmt->SubFormat == KSDATAFORMAT_SUBTYPE_PCM) ? 0 : 1;
 	}
 
 	//レイテンシ取得

@@ -109,12 +109,6 @@ namespace wav
 				}
 			}
 
-			auto param = okmonn::GetParam(info.sample, 48000);
-			auto degree = okmonn::GetDegree(100, param);
-			auto corre = okmonn::Sinc(100, degree, param);
-			auto data = okmonn::ReSampling(corre, param, *wave, info);
-			std::swap(*wave, data);
-
 			return true;
 		}
 

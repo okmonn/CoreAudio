@@ -39,7 +39,7 @@ private:
 	void CreateAudio(void);
 
 	// フォーマット取得
-	void* GetFormat(okmonn::SoundInfo* info = nullptr);
+	void* GetFormat(void);
 
 	// オーディオクライアント初期化
 	void Initialized(void);
