@@ -1,12 +1,34 @@
 #pragma once
 #include "../Function/Function.h"
 #include <memory>
+#include <algorithm>
 
 /*
 振幅：std::sqrt(real * real + imag * imag)
 位相：std::atan2(imag / real);
 パワー：振幅 * 振幅
 */
+
+/*
+data：波形データ
+degree：フィルタ次数
+*/
+std::vector<float> FIR(const std::vector<float>& corre, const std::vector<float>& data)
+{
+	std::vector<float>tmp(data.size(), 0);
+	for (size_t i = 0; i < tmp.size(); ++i)
+	{
+		for (size_t n = 0; n < corre.size(); ++n)
+		{
+			if (int(i - n) >= 0)
+			{
+				tmp[i] += corre[n] * data[i - n];
+			}
+		}
+	}
+
+	return tmp;
+}
 
 namespace wav
 {
@@ -108,14 +130,6 @@ namespace wav
 					break;
 				}
 			}
-			
-			auto psola = okmonn::PSOLA(*wave, info, 0.5f);
-			info.sample /= 0.5f;
-			auto param = okmonn::GetParam(info.sample, 48000);
-			auto degree = okmonn::GetDegree(100, param);
-			auto corre = okmonn::Sinc(100, degree, param);
-			auto re = okmonn::ReSampling(corre, param, psola, info);
-			std::swap(*wave, re);
 
 			return true;
 		}
