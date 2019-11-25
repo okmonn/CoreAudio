@@ -37,6 +37,15 @@
     <Filter Include="Descriptor">
       <UniqueIdentifier>{6314cdd2-10dd-4a82-adb6-a9c9924baf0b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RenderTarget">
+      <UniqueIdentifier>{7521eeba-ac17-4e6b-af0e-1de2869272ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Output">
+      <UniqueIdentifier>{1dacda26-2622-4f24-9f65-94f92bb6f3c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Constant">
+      <UniqueIdentifier>{0287e48b-3351-4259-a8ce-1960491d72a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -66,6 +75,15 @@
     <ClCompile Include="DXR\Descriptor\Descriptor.cpp">
       <Filter>Descriptor</Filter>
     </ClCompile>
+    <ClCompile Include="DXR\Render\Render.cpp">
+      <Filter>RenderTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\Output\Output.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\Constant\Constant.cpp">
+      <Filter>Constant</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXR\Device\Device.h">
@@ -94,6 +112,15 @@
     </ClInclude>
     <ClInclude Include="DXR\Descriptor\Descriptor.h">
       <Filter>Descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Render\Render.h">
+      <Filter>RenderTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Output\Output.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Constant\Constant.h">
+      <Filter>Constant</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,7 +2,6 @@
 #include <vector>
 
 enum D3D12_DESCRIPTOR_HEAP_TYPE : int;
-enum D3D12_RESOURCE_DIMENSION : int;
 enum D3D12_HEAP_FLAGS: int;
 enum D3D12_RESOURCE_STATES : int;
 struct ID3D12DescriptorHeap;
@@ -10,22 +9,6 @@ struct D3D12_HEAP_PROPERTIES;
 struct D3D12_RESOURCE_DESC;
 struct ID3D12Resource;
 struct D3D12_CLEAR_VALUE;
-
-namespace Descriptor
-{
-	// ヒープの生成
-	void CreateHeap(ID3D12DescriptorHeap** heap, const D3D12_DESCRIPTOR_HEAP_TYPE& type, const unsigned int& rscNum, const bool& shaderFlag = false);
-
-	// デフォルトヒーププロパティの取得
-	D3D12_HEAP_PROPERTIES DefaultProp(void);
-
-	// アップロードヒーププロパティの取得
-	D3D12_HEAP_PROPERTIES UploadProp(void);
-
-	// リソースの生成
-	void CreateRsc(ID3D12Resource** rsc, const D3D12_HEAP_PROPERTIES& prop, const D3D12_RESOURCE_DESC& desc, const D3D12_RESOURCE_STATES& state, 
-		const D3D12_HEAP_FLAGS& flag = D3D12_HEAP_FLAGS(0), const D3D12_CLEAR_VALUE* clear = nullptr);
-}
 
 
 class Descriptor
@@ -36,7 +19,16 @@ public:
 	// デストラクタ
 	virtual ~Descriptor();
 
+	// ヒープの取得
+	ID3D12DescriptorHeap* Heap(void) const;
+
 protected:
+	// デフォルトヒーププロパティの取得
+	static D3D12_HEAP_PROPERTIES DefaultProp(void);
+
+	// アップロードヒーププロパティの取得
+	static D3D12_HEAP_PROPERTIES UploadProp(void);
+
 	// ヒープの生成
 	void CreateHeap(const D3D12_DESCRIPTOR_HEAP_TYPE& type, const unsigned int& rscNum, const bool& shaderFlag = false);
 
@@ -44,10 +36,22 @@ protected:
 	void CreateRsc(ID3D12Resource** rsc, const D3D12_HEAP_PROPERTIES& prop, const D3D12_RESOURCE_DESC& desc, const D3D12_RESOURCE_STATES& state,
 		const D3D12_HEAP_FLAGS& flag = D3D12_HEAP_FLAGS(0), const D3D12_CLEAR_VALUE* clear = nullptr);
 
+	// RTVの生成
+	void RTV(const unsigned int& index);
+
+	// UAVの生成
+	void UAV(const unsigned int& index, const unsigned int& num, const unsigned int& stride);
+
+	// マップ
+	void Map(const unsigned int& index, void* data);
+
 
 	// ヒープ
 	ID3D12DescriptorHeap* heap;
 
 	// リソース
 	std::vector<ID3D12Resource*>rsc;
+
+	// バッファ
+	void* buf;
 };
