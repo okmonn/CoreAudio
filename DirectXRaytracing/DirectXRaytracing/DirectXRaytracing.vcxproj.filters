@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Device">
+      <UniqueIdentifier>{48fd2c90-c16e-4654-95da-647424d0d048}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Window">
+      <UniqueIdentifier>{c7506d51-f6ca-454b-aa3e-468be68b31d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandQueue">
+      <UniqueIdentifier>{da25811c-039d-4a19-ae70-c8d96060be02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandAllocator">
+      <UniqueIdentifier>{06b08d2a-a4b8-41bb-a58e-897a481eb1a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandList">
+      <UniqueIdentifier>{738fbe4e-64b2-43c0-a5b7-96c90a15a1b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fence">
+      <UniqueIdentifier>{f28a7379-9aa3-4582-b810-bc699bda806a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SwapChain">
+      <UniqueIdentifier>{6925ed2c-7a2b-48c5-a582-0516eca034e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Descriptor">
+      <UniqueIdentifier>{6314cdd2-10dd-4a82-adb6-a9c9924baf0b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\Device\Device.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\Window\Window.cpp">
+      <Filter>Window</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\Queue\Queue.cpp">
+      <Filter>CommandQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\Allocator\Allocator.cpp">
+      <Filter>CommandAllocator</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\List\List.cpp">
+      <Filter>CommandList</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\Fence\Fence.cpp">
+      <Filter>Fence</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\Swap\Swap.cpp">
+      <Filter>SwapChain</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\Descriptor\Descriptor.cpp">
+      <Filter>Descriptor</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DXR\Device\Device.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Window\Window.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Vector2.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Queue\Queue.h">
+      <Filter>CommandQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Allocator\Allocator.h">
+      <Filter>CommandAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\List\List.h">
+      <Filter>CommandList</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Fence\Fence.h">
+      <Filter>Fence</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Swap\Swap.h">
+      <Filter>SwapChain</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Descriptor\Descriptor.h">
+      <Filter>Descriptor</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
