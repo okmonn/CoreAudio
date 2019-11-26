@@ -30,11 +30,10 @@ void Queue::CreateQueue(const D3D12_COMMAND_LIST_TYPE& type)
 	_ASSERT(hr == S_OK);
 }
 
-// フェンスカウントのセット
-void Queue::Signal(ID3D12Fence1* fence, unsigned __int64& fenceCnt)
+// コマンドリストの実行
+void Queue::Execution(ID3D12CommandList* const* list, const size_t& listNum)
 {
-	auto hr = queue->Signal(fence, ++fenceCnt);
-	_ASSERT(hr == S_OK);
+	queue->ExecuteCommandLists(unsigned int(listNum), list);
 }
 
 // コマンドキューの取得

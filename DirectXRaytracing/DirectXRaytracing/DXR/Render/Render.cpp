@@ -38,7 +38,7 @@ void Render::Init(void)
 
 	for (size_t i = 0; i < rsc.size(); ++i)
 	{
-		auto hr = swap.lock()->Swp()->GetBuffer(i, IID_PPV_ARGS(&rsc[i]));
+		auto hr = swap.lock()->Swp()->GetBuffer(unsigned int(i), IID_PPV_ARGS(&rsc[i]));
 		_ASSERT(hr == S_OK);
 
 		RTV(i);

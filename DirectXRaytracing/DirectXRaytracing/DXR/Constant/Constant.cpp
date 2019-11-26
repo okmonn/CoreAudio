@@ -40,3 +40,9 @@ void Constant::CreateRsc(const unsigned int& index, const unsigned int& size, co
 	desc.Width            = size * num;
 	Descriptor::CreateRsc(&rsc[index], UploadProp(), desc, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
 }
+
+// ƒŠƒ\[ƒX‚Ìæ“¾
+ID3D12Resource* Constant::Rsc(const unsigned int& index) const
+{
+	return rsc[index];
+}

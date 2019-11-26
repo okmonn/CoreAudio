@@ -20,6 +20,13 @@ Allocator::~Allocator()
 	}
 }
 
+// コマンドアロケータのリセット
+void Allocator::Reset(void)
+{
+	auto hr = allo->Reset();
+	_ASSERT(hr == S_OK);
+}
+
 // コマンドアロケータの生成
 void Allocator::CreateAllo(const D3D12_COMMAND_LIST_TYPE& type)
 {

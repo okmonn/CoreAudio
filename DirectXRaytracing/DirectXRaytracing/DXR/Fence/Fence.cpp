@@ -36,7 +36,7 @@ void Fence::CreateFence(void)
 // コマンド待機
 void Fence::Wait(void)
 {
-	queue.lock()->Signal(fence, fenceCnt);
+	queue.lock()->Que()->Signal(fence, ++fenceCnt);
 
 	if (fence->GetCompletedValue() != fenceCnt)
 	{

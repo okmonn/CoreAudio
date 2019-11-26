@@ -16,11 +16,16 @@ public:
 		this->y = y;
 	}
 	Vector2(const Vector2& vec) {
-		x = vec.x;
-		y = vec.y;
+		(*this) = vec;
 	}
 	// デストラクタ
 	~Vector2() {
+	}
+
+	//演算子オーバーロード
+	void operator=(const Vector2& vec) {
+		x = vec.x;
+		y = vec.y;
 	}
 };
 

@@ -3,6 +3,7 @@
 enum D3D12_COMMAND_LIST_TYPE : int;
 struct ID3D12CommandQueue;
 struct ID3D12Fence1;
+struct ID3D12CommandList;
 
 class Queue
 {
@@ -12,8 +13,8 @@ public:
 	// デストラクタ
 	~Queue();
 
-	// フェンスカウントのセット
-	void Signal(ID3D12Fence1* fence, unsigned __int64& fenceCnt);
+	// コマンドリストの実行
+	void Execution(ID3D12CommandList* const* list, const size_t& listNum = 1);
 
 	// コマンドキューの取得
 	ID3D12CommandQueue* Que(void) const;

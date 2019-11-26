@@ -1,11 +1,13 @@
 #include "Output.h"
+#include "../Device/Device.h"
 #include "../Window/Window.h"
+#include "../Acceleration/Acceleration.h"
 #include <d3d12.h>
 
 // コンストラクタ
-Output::Output(std::weak_ptr<Window>win)
+Output::Output(std::weak_ptr<Window>win, std::weak_ptr<Acceleration>top)
 {
-	CreateHeap(D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, rsc.size(), true);
+	CreateHeap(D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, true);
 	CreateRsc(win);
 	UAV(0, 0, 0);
 }
@@ -46,8 +48,21 @@ void Output::CreateRsc(std::weak_ptr<Window>win)
 	Descriptor::CreateRsc(&rsc[0], DefaultProp(), desc, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COPY_SOURCE);
 }
 
+// SRVの生成
+void Output::SRV(std::weak_ptr<Acceleration> top)
+{
+	D3D12_SHADER_RESOURCE_VIEW_DESC desc{};
+	desc.RaytracingAccelerationStructure.Location = top.lock()->Result()->GetGPUVirtualAddress();
+	desc.Shader4ComponentMapping                  = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	desc.ViewDimension                            = D3D12_SRV_DIMENSION::D3D12_SRV_DIMENSION_RAYTRACING_ACCELERATION_STRUCTURE;
+
+	auto handle = heap->GetCPUDescriptorHandleForHeapStart();
+	handle.ptr += Device::Get().Dev()->GetDescriptorHandleIncrementSize(heap->GetDesc().Type);
+	Device::Get().Dev()->CreateShaderResourceView(nullptr, &desc, handle);
+}
+
 // リソースの取得
 ID3D12Resource* Output::Rsc(void) const
 {
-	return rsc[0];
+	return *rsc.begin();
 }

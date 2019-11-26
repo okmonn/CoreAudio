@@ -46,6 +46,15 @@
     <Filter Include="Constant">
       <UniqueIdentifier>{0287e48b-3351-4259-a8ce-1960491d72a9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Acceleration">
+      <UniqueIdentifier>{5c56c98f-8933-4333-b961-132323c35f20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShaderLibrary">
+      <UniqueIdentifier>{383580a2-b426-4038-8b21-08108b935b21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RootSignature">
+      <UniqueIdentifier>{0142965d-db86-4b19-a084-8a52a06fa207}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -84,6 +93,15 @@
     <ClCompile Include="DXR\Constant\Constant.cpp">
       <Filter>Constant</Filter>
     </ClCompile>
+    <ClCompile Include="DXR\Acceleration\Acceleration.cpp">
+      <Filter>Acceleration</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\ShaderLibrary\ShaderLibrary.cpp">
+      <Filter>ShaderLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\Root\Root.cpp">
+      <Filter>RootSignature</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXR\Device\Device.h">
@@ -121,6 +139,21 @@
     </ClInclude>
     <ClInclude Include="DXR\Constant\Constant.h">
       <Filter>Constant</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Vector3.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Acceleration\Acceleration.h">
+      <Filter>Acceleration</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Matrix.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\ShaderLibrary\ShaderLibrary.h">
+      <Filter>ShaderLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Root\Root.h">
+      <Filter>RootSignature</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

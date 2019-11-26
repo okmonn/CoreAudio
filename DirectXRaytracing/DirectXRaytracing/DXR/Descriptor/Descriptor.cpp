@@ -5,7 +5,7 @@
 
 // コンストラクタ
 Descriptor::Descriptor() : 
-	heap(nullptr), buf(nullptr)
+	heap(nullptr)
 {
 	rsc.resize(1);
 }
@@ -16,13 +16,13 @@ Descriptor::~Descriptor()
 }
 
 // ヒープの生成
-void Descriptor::CreateHeap(const D3D12_DESCRIPTOR_HEAP_TYPE& type, const unsigned int& rscNum, const bool& shaderFlag)
+void Descriptor::CreateHeap(const D3D12_DESCRIPTOR_HEAP_TYPE& type, const bool& shaderFlag)
 {
 	D3D12_DESCRIPTOR_HEAP_DESC desc{};
 	desc.Flags = (shaderFlag == true)
 		? D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE
 		: D3D12_DESCRIPTOR_HEAP_FLAGS::D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-	desc.NumDescriptors = rscNum;
+	desc.NumDescriptors = unsigned int(rsc.size());
 	desc.Type           = type;
 	auto hr = Device::Get().Dev()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&heap));
 	_ASSERT(hr == S_OK);
@@ -37,7 +37,7 @@ void Descriptor::CreateRsc(ID3D12Resource** rsc, const D3D12_HEAP_PROPERTIES& pr
 }
 
 // RTVの生成
-void Descriptor::RTV(const unsigned int& index)
+void Descriptor::RTV(const size_t& index)
 {
 	D3D12_RENDER_TARGET_VIEW_DESC desc{};
 	desc.Format        = rsc[index]->GetDesc().Format;
@@ -65,10 +65,18 @@ void Descriptor::UAV(const unsigned int& index, const unsigned int& num, const u
 }
 
 // マップ
-void Descriptor::Map(const unsigned int& index, void* data)
+void Descriptor::Map(const size_t& index, void** buf)
 {
-	auto hr = rsc[index]->Map(0, nullptr, &buf);
+	D3D12_RANGE range{ 0, 1 };
+	auto hr = rsc[index]->Map(0, &range, &(*buf));
 	_ASSERT(hr == S_OK);
+}
+
+// アンマップ
+void Descriptor::UnMap(const unsigned int& index)
+{
+	D3D12_RANGE range{0, 1};
+	rsc[index]->Unmap(0, &range);
 }
 
 // デフォルトヒーププロパティの取得
