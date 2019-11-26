@@ -15,9 +15,6 @@ public:
 	// デストラクタ
 	~Render();
 
-	// レンダーターゲットのクリア
-	void Clear(std::weak_ptr<List>list, float* color, const D3D12_CPU_DESCRIPTOR_HANDLE* depth = nullptr);
-
 	// リソースの取得
 	ID3D12Resource* Rsc(void) const;
 

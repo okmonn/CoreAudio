@@ -55,6 +55,9 @@
     <Filter Include="RootSignature">
       <UniqueIdentifier>{0142965d-db86-4b19-a084-8a52a06fa207}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ClosestHit">
+      <UniqueIdentifier>{32117d27-736e-47ab-abbd-a3de9418f01a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -101,6 +104,9 @@
     </ClCompile>
     <ClCompile Include="DXR\Root\Root.cpp">
       <Filter>RootSignature</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\ClosestHit\ClosestHit.cpp">
+      <Filter>ClosestHit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -155,5 +161,21 @@
     <ClInclude Include="DXR\Root\Root.h">
       <Filter>RootSignature</Filter>
     </ClInclude>
+    <ClInclude Include="DXR\ClosestHit\ClosestHit.h">
+      <Filter>ClosestHit</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Helper.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="HLSL\RayGeneration.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HLSL\Header.hlsli">
+      <Filter>リソース ファイル</Filter>
+    </None>
   </ItemGroup>
 </Project>

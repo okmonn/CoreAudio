@@ -34,7 +34,7 @@ Render::~Render()
 // 初期化
 void Render::Init(void)
 {
-	CreateHeap(D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_RTV, rsc.size());
+	CreateHeap(D3D12_DESCRIPTOR_HEAP_TYPE::D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	for (size_t i = 0; i < rsc.size(); ++i)
 	{
@@ -43,16 +43,6 @@ void Render::Init(void)
 
 		RTV(i);
 	}
-}
-
-// レンダーターゲットのクリア
-void Render::Clear(std::weak_ptr<List> list, float* color, const D3D12_CPU_DESCRIPTOR_HANDLE* depth)
-{
-	auto rtv = heap->GetCPUDescriptorHandleForHeapStart();
-	rtv.ptr += Device::Get().Dev()->GetDescriptorHandleIncrementSize(heap->GetDesc().Type);
-
-	list.lock()->Lis()->OMSetRenderTargets(1, &rtv, false, depth);
-	list.lock()->Lis()->ClearRenderTargetView(rtv, color, 0, nullptr);
 }
 
 // リソースの取得

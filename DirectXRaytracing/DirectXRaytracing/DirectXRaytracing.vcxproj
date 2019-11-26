@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="DXR\Acceleration\Acceleration.cpp" />
     <ClCompile Include="DXR\Allocator\Allocator.cpp" />
+    <ClCompile Include="DXR\ClosestHit\ClosestHit.cpp" />
     <ClCompile Include="DXR\Constant\Constant.cpp" />
     <ClCompile Include="DXR\Descriptor\Descriptor.cpp" />
     <ClCompile Include="DXR\Device\Device.cpp" />
@@ -146,10 +147,12 @@
   <ItemGroup>
     <ClInclude Include="DXR\Acceleration\Acceleration.h" />
     <ClInclude Include="DXR\Allocator\Allocator.h" />
+    <ClInclude Include="DXR\ClosestHit\ClosestHit.h" />
     <ClInclude Include="DXR\Constant\Constant.h" />
     <ClInclude Include="DXR\Descriptor\Descriptor.h" />
     <ClInclude Include="DXR\Device\Device.h" />
     <ClInclude Include="DXR\Fence\Fence.h" />
+    <ClInclude Include="DXR\Helper.h" />
     <ClInclude Include="DXR\List\List.h" />
     <ClInclude Include="DXR\Matrix.h" />
     <ClInclude Include="DXR\Output\Output.h" />
@@ -161,6 +164,34 @@
     <ClInclude Include="DXR\Vector2.h" />
     <ClInclude Include="DXR\Vector3.h" />
     <ClInclude Include="DXR\Window\Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="HLSL\RayGeneration.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Library</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Library</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Library</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Library</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">6.3</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">6.3</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.3</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.3</ShaderModel>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HLSL\Header.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
