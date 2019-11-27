@@ -2,6 +2,7 @@
 #include "../Device/Device.h"
 #include "../Helper.h"
 #include <wrl.h>
+#include <vector>
 #include <d3d12.h>
 #include <dxcapi.h>
 #include <d3dcompiler.h>

@@ -134,8 +134,10 @@
     <ClCompile Include="DXR\Descriptor\Descriptor.cpp" />
     <ClCompile Include="DXR\Device\Device.cpp" />
     <ClCompile Include="DXR\Fence\Fence.cpp" />
+    <ClCompile Include="DXR\Helper.cpp" />
     <ClCompile Include="DXR\List\List.cpp" />
     <ClCompile Include="DXR\Output\Output.cpp" />
+    <ClCompile Include="DXR\Primitive\Primitive.cpp" />
     <ClCompile Include="DXR\Queue\Queue.cpp" />
     <ClCompile Include="DXR\Render\Render.cpp" />
     <ClCompile Include="DXR\Root\Root.cpp" />
@@ -156,6 +158,7 @@
     <ClInclude Include="DXR\List\List.h" />
     <ClInclude Include="DXR\Matrix.h" />
     <ClInclude Include="DXR\Output\Output.h" />
+    <ClInclude Include="DXR\Primitive\Primitive.h" />
     <ClInclude Include="DXR\Queue\Queue.h" />
     <ClInclude Include="DXR\Render\Render.h" />
     <ClInclude Include="DXR\Root\Root.h" />

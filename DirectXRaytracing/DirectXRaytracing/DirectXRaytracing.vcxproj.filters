@@ -58,6 +58,9 @@
     <Filter Include="ClosestHit">
       <UniqueIdentifier>{32117d27-736e-47ab-abbd-a3de9418f01a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Primitive">
+      <UniqueIdentifier>{5ae21288-8753-43c5-84aa-fbf0ad1e24b2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -107,6 +110,12 @@
     </ClCompile>
     <ClCompile Include="DXR\ClosestHit\ClosestHit.cpp">
       <Filter>ClosestHit</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\Helper.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\Primitive\Primitive.cpp">
+      <Filter>Primitive</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +175,9 @@
     </ClInclude>
     <ClInclude Include="DXR\Helper.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Primitive\Primitive.h">
+      <Filter>Primitive</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
