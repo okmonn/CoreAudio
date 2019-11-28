@@ -5,6 +5,7 @@
 struct D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS;
 struct D3D12_RAYTRACING_INSTANCE_DESC;
 class List;
+class Primitive;
 class Matrix3x4;
 
 namespace DXR
@@ -22,15 +23,15 @@ class Acceleration :
 {
 public:
 	// コンストラクタ
-	Acceleration(std::weak_ptr<List>list, const DXR::AccelerationType& type, const size_t& instanceNum);
+	Acceleration(std::weak_ptr<List>list, const DXR::AccelerationType& type);
 	// デストラクタ
 	~Acceleration();
 
 	// トップレベルの生成
-	void CreateTop(const size_t& instanceNum, const size_t& rayNum, const Acceleration* bottom, const size_t& bottomNum, const Matrix3x4* initMat);
+	void CreateTop(const size_t& rayNum, Acceleration* bottom, const size_t& bottomNum);
 
 	// ボトムレベルの生成
-	void CreateBottom(ID3D12Resource* vertex);
+	void CreateBottom(std::weak_ptr<Primitive>prim);
 
 	// リザルトリソースの取得
 	ID3D12Resource* Result(void) const;
@@ -49,11 +50,14 @@ private:
 	void Build(void);
 
 	// トップレベルの更新
-	void UpData(const Matrix3x4* matrix);
+	void UpData(void);
 
 
 	// リスト
 	std::weak_ptr<List>list;
+
+	// プリミティブ
+	std::weak_ptr<Primitive>prim;
 
 	// ビルド入力情報
 	std::unique_ptr<D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS>input;
@@ -63,4 +67,7 @@ private:
 
 	// バッファ
 	D3D12_RAYTRACING_INSTANCE_DESC* buf;
+
+	// ボトムレベル
+	std::vector<Acceleration*>bottom;
 };

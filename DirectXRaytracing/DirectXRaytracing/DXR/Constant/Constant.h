@@ -6,14 +6,14 @@ class Constant :
 {
 public:
 	// コンストラクタ
-	Constant(const unsigned int& size, const unsigned int& num);
+	Constant(const size_t& size, const size_t& num);
 	// デストラクタ
 	~Constant();
 
 	// リソースの取得
-	ID3D12Resource* Rsc(const unsigned int& index) const;
+	ID3D12Resource* Rsc(const size_t& index) const;
 
 private:
 	// リソースの生成
-	void CreateRsc(const unsigned int& index, const unsigned int& size, const unsigned int& num);
+	void CreateRsc(const size_t& size, const size_t& num);
 };

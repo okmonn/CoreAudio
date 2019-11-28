@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="DXR\Acceleration\Acceleration.cpp" />
     <ClCompile Include="DXR\Allocator\Allocator.cpp" />
+    <ClCompile Include="DXR\Association\Association.cpp" />
     <ClCompile Include="DXR\ClosestHit\ClosestHit.cpp" />
     <ClCompile Include="DXR\Constant\Constant.cpp" />
     <ClCompile Include="DXR\Descriptor\Descriptor.cpp" />
@@ -137,10 +138,12 @@
     <ClCompile Include="DXR\Helper.cpp" />
     <ClCompile Include="DXR\List\List.cpp" />
     <ClCompile Include="DXR\Output\Output.cpp" />
+    <ClCompile Include="DXR\PipeConfig\pipeConfig.cpp" />
     <ClCompile Include="DXR\Primitive\Primitive.cpp" />
     <ClCompile Include="DXR\Queue\Queue.cpp" />
     <ClCompile Include="DXR\Render\Render.cpp" />
     <ClCompile Include="DXR\Root\Root.cpp" />
+    <ClCompile Include="DXR\ShaderConfig\ShaderConfig.cpp" />
     <ClCompile Include="DXR\ShaderLibrary\ShaderLibrary.cpp" />
     <ClCompile Include="DXR\Swap\Swap.cpp" />
     <ClCompile Include="DXR\Window\Window.cpp" />
@@ -149,6 +152,7 @@
   <ItemGroup>
     <ClInclude Include="DXR\Acceleration\Acceleration.h" />
     <ClInclude Include="DXR\Allocator\Allocator.h" />
+    <ClInclude Include="DXR\Association\Association.h" />
     <ClInclude Include="DXR\ClosestHit\ClosestHit.h" />
     <ClInclude Include="DXR\Constant\Constant.h" />
     <ClInclude Include="DXR\Descriptor\Descriptor.h" />
@@ -158,14 +162,17 @@
     <ClInclude Include="DXR\List\List.h" />
     <ClInclude Include="DXR\Matrix.h" />
     <ClInclude Include="DXR\Output\Output.h" />
+    <ClInclude Include="DXR\PipeConfig\pipeConfig.h" />
     <ClInclude Include="DXR\Primitive\Primitive.h" />
     <ClInclude Include="DXR\Queue\Queue.h" />
     <ClInclude Include="DXR\Render\Render.h" />
     <ClInclude Include="DXR\Root\Root.h" />
+    <ClInclude Include="DXR\ShaderConfig\ShaderConfig.h" />
     <ClInclude Include="DXR\ShaderLibrary\ShaderLibrary.h" />
     <ClInclude Include="DXR\Swap\Swap.h" />
     <ClInclude Include="DXR\Vector2.h" />
     <ClInclude Include="DXR\Vector3.h" />
+    <ClInclude Include="DXR\Vector4.h" />
     <ClInclude Include="DXR\Window\Window.h" />
   </ItemGroup>
   <ItemGroup>

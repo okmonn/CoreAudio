@@ -2,20 +2,23 @@
 #include <d3d12.h>
 
 // コンストラクタ
-Constant::Constant(const unsigned int& size, const unsigned int& num)
+Constant::Constant(const size_t& size, const size_t& num)
 {
 	rsc.resize(num);
+
+	CreateRsc(size, num);
 }
 
 // デストラクタ
 Constant::~Constant()
 {
-	for (auto& i : rsc)
+	for (size_t i = 0; i < rsc.size(); ++i)
 	{
-		if (i != nullptr)
+		if (rsc[i] != nullptr)
 		{
-			i->Release();
-			i = nullptr;
+			UnMap(i);
+			rsc[i]->Release();
+			rsc[i] = nullptr;
 		}
 	}
 	if (heap != nullptr)
@@ -26,7 +29,7 @@ Constant::~Constant()
 }
 
 // リソースの生成
-void Constant::CreateRsc(const unsigned int& index, const unsigned int& size, const unsigned int& num)
+void Constant::CreateRsc(const size_t& size, const size_t& num)
 {
 	D3D12_RESOURCE_DESC desc{};
 	desc.DepthOrArraySize = 1;
@@ -37,12 +40,16 @@ void Constant::CreateRsc(const unsigned int& index, const unsigned int& size, co
 	desc.Layout           = D3D12_TEXTURE_LAYOUT::D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	desc.MipLevels        = 1;
 	desc.SampleDesc       = { 1, 0 };
-	desc.Width            = size * num;
-	Descriptor::CreateRsc(&rsc[index], UploadProp(), desc, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
+	desc.Width            = unsigned int(size / num);
+
+	for (size_t i = 0; i < rsc.size(); ++i)
+	{
+		Descriptor::CreateRsc(&rsc[i], UploadProp(), desc, D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_GENERIC_READ);
+	}
 }
 
 // リソースの取得
-ID3D12Resource* Constant::Rsc(const unsigned int& index) const
+ID3D12Resource* Constant::Rsc(const size_t& index) const
 {
 	return rsc[index];
 }

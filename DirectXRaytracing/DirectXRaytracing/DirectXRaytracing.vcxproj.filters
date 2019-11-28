@@ -61,6 +61,15 @@
     <Filter Include="Primitive">
       <UniqueIdentifier>{5ae21288-8753-43c5-84aa-fbf0ad1e24b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Association">
+      <UniqueIdentifier>{a722de0a-72cc-4e89-828d-86ebf48fac48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PipeConfig">
+      <UniqueIdentifier>{d15414ee-7899-4c32-8f47-906edbfae3c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShaderConfig">
+      <UniqueIdentifier>{1c125102-6a94-4435-9b6a-cca99410c46a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -116,6 +125,15 @@
     </ClCompile>
     <ClCompile Include="DXR\Primitive\Primitive.cpp">
       <Filter>Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\Association\Association.cpp">
+      <Filter>Association</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\PipeConfig\pipeConfig.cpp">
+      <Filter>PipeConfig</Filter>
+    </ClCompile>
+    <ClCompile Include="DXR\ShaderConfig\ShaderConfig.cpp">
+      <Filter>ShaderConfig</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +196,18 @@
     </ClInclude>
     <ClInclude Include="DXR\Primitive\Primitive.h">
       <Filter>Primitive</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Vector4.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\Association\Association.h">
+      <Filter>Association</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\PipeConfig\pipeConfig.h">
+      <Filter>PipeConfig</Filter>
+    </ClInclude>
+    <ClInclude Include="DXR\ShaderConfig\ShaderConfig.h">
+      <Filter>ShaderConfig</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

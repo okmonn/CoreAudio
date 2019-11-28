@@ -6,15 +6,9 @@
 #include "DXR/Swap/Swap.h"
 #include "DXR/Render/Render.h"
 #include "DXR/Primitive/Primitive.h"
+#include "DXR/Vector4.h"
 #include <d3d12.h>
 #include <memory>
-
-float color[] = {
-	1.0f,
-	1.0f,
-	1.0f,
-	1.0f
-};
 
 int main()
 {
@@ -31,17 +25,44 @@ int main()
 			Vec3f(0.866f,  -0.5f, 0),
 			Vec3f(-0.866f, -0.5f, 0),
 	};
-	std::shared_ptr<Primitive>triangle = std::make_shared<Primitive>(tri, _countof(tri));
-	const Vec3f pln[] = {
-			Vec3f(-100.0f, -1.0f, -2.0f),
-			Vec3f(100.0f, -1.0f, 100.0f),
-			Vec3f(-100.0f, -1.0f, 100.0f),
+	const Vec4f triColor[] = {
+			Vec4f(1.0f, 0.0f, 0.0f, 1.0f),
+			Vec4f(1.0f, 1.0f, 0.0f, 1.0f),
+			Vec4f(1.0f, 0.0f, 1.0f, 1.0f),
 
-			Vec3f(-100.0f, -1.0f, -2.0f),
-			Vec3f(100.0f, -1.0f, -2.0f),
-			Vec3f(100.0f, -1.0f, 100.0f)
+			Vec4f(0.0f, 1.0f, 0.0f, 1.0f),
+			Vec4f(0.0f, 1.0f, 1.0f, 1.0f),
+			Vec4f(1.0f, 1.0f, 0.0f, 1.0f),
+
+			Vec4f(0.0f, 0.0f, 1.0f, 1.0f),
+			Vec4f(1.0f, 0.0f, 1.0f, 1.0f),
+			Vec4f(0.0f, 1.0f, 1.0f, 1.0f)
 	};
-	std::shared_ptr<Primitive>plane = std::make_shared<Primitive>(pln, _countof(pln));
+	std::shared_ptr<Primitive>triangle = std::make_shared<Primitive>(tri, _countof(tri), sizeof(triColor), 3);
+	for (size_t i = 0; i < _countof(tri); ++i)
+	{
+		triangle->SetConstant(i, (void*)&triColor[i * _countof(tri)]);
+	}
+	const Vec3f pln[] = {
+		Vec3f(-100.0f, -1.0f, -2.0f),
+		Vec3f(100.0f, -1.0f, 100.0f),
+		Vec3f(-100.0f, -1.0f, 100.0f),
+
+		Vec3f(-100.0f, -1.0f, -2.0f),
+		Vec3f(100.0f, -1.0f, -2.0f),
+		Vec3f(100.0f, -1.0f, 100.0f)
+	};
+	const Vec4f plnColor[] = {
+		Vec4f(1.0f, 1.0f, 1.0f, 1.0f),
+		Vec4f(1.0f, 1.0f, 1.0f, 1.0f),
+		Vec4f(1.0f, 1.0f, 1.0f, 1.0f),
+
+		Vec4f(1.0f, 1.0f, 1.0f, 1.0f),
+		Vec4f(1.0f, 1.0f, 1.0f, 1.0f),
+		Vec4f(1.0f, 1.0f, 1.0f, 1.0f),
+	};
+	std::shared_ptr<Primitive>plane = std::make_shared<Primitive>(pln, _countof(pln), sizeof(plnColor), 1);
+	plane->SetConstant(0, (void*)plnColor);
 
 	while (Window::CheckMsg())
 	{

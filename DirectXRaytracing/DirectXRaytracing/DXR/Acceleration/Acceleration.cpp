@@ -1,12 +1,12 @@
 #include "Acceleration.h"
 #include "../Device/Device.h"
 #include "../List/List.h"
-#include "../Matrix.h"
+#include "../Primitive/Primitive.h"
 #include <d3d12.h>
 
 // コンストラクタ
-Acceleration::Acceleration(std::weak_ptr<List>list, const DXR::AccelerationType& type, const size_t& instanceNum) : list(list),
-	input(std::make_unique<D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS>()), instanceNum(instanceNum),buf(nullptr)
+Acceleration::Acceleration(std::weak_ptr<List>list, const DXR::AccelerationType& type) : list(list),
+	input(std::make_unique<D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS>()), instanceNum(0),buf(nullptr)
 {
 	rsc.resize(size_t(type));
 }
@@ -30,8 +30,13 @@ Acceleration::~Acceleration()
 }
 
 // トップレベルの生成
-void Acceleration::CreateTop(const size_t& instanceNum, const size_t& rayNum, const Acceleration* bottom, const size_t& bottomNum, const Matrix3x4* initMat)
+void Acceleration::CreateTop(const size_t& rayNum, Acceleration* bottom, const size_t& bottomNum)
 {
+	for (size_t i = 0; i < bottomNum; ++i)
+	{
+		instanceNum += bottom[i].prim.lock()->InstanceNum();
+		this->bottom.push_back(&bottom[i]);
+	}
 	size_t index = rsc.size() - 1;
 
 	//インスタンスリソースの生成
@@ -68,7 +73,7 @@ void Acceleration::CreateTop(const size_t& instanceNum, const size_t& rayNum, co
 	Map(index, (void**)&buf);
 	for (size_t i = bottomNum; i < bottomNum; ++i)
 	{
-		for (size_t n = 0; n < bottom[i].instanceNum; ++i)
+		for (size_t n = 0; n < bottom[i].prim.lock()->InstanceNum(); ++i)
 		{
 			index = i * bottomNum + n;
 
@@ -77,7 +82,7 @@ void Acceleration::CreateTop(const size_t& instanceNum, const size_t& rayNum, co
 			buf[index].InstanceContributionToHitGroupIndex = index * rayNum;
 			buf[index].InstanceID = unsigned int(index);
 			buf[index].InstanceMask = 0xff;
-			std::memcpy(buf[index].Transform, initMat[index].mat, sizeof(Matrix3x4));
+			std::memcpy(buf[index].Transform, prim.lock()->Matrix(n).mat, sizeof(Matrix3x4));
 		}
 	}
 
@@ -85,16 +90,16 @@ void Acceleration::CreateTop(const size_t& instanceNum, const size_t& rayNum, co
 }
 
 // ボトムレベルの生成
-void Acceleration::CreateBottom(ID3D12Resource* vertex)
+void Acceleration::CreateBottom(std::weak_ptr<Primitive>prim)
 {
 	size_t index = rsc.size() - 1;
 
 	//ジオメトリ情報
 	D3D12_RAYTRACING_GEOMETRY_DESC geo{};
 	geo.Flags = D3D12_RAYTRACING_GEOMETRY_FLAGS::D3D12_RAYTRACING_GEOMETRY_FLAG_OPAQUE;
-	geo.Triangles.VertexBuffer.StartAddress  = vertex->GetGPUVirtualAddress();
+	geo.Triangles.VertexBuffer.StartAddress  = prim.lock()->Vertex()->GetGPUVirtualAddress();
 	geo.Triangles.VertexBuffer.StrideInBytes = sizeof(Vec3f);
-	geo.Triangles.VertexCount                = unsigned int(vertex->GetDesc().Width / geo.Triangles.VertexBuffer.StrideInBytes);
+	geo.Triangles.VertexCount                = unsigned int(prim.lock()->Vertex()->GetDesc().Width / geo.Triangles.VertexBuffer.StrideInBytes);
 	geo.Triangles.VertexFormat               = DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT;
 	//プリビルド情報の取得
 	input->DescsLayout    = D3D12_ELEMENTS_LAYOUT::D3D12_ELEMENTS_LAYOUT_ARRAY;
@@ -138,13 +143,17 @@ void Acceleration::Build(void)
 }
 
 // トップレベルの更新
-void Acceleration::UpData(const Matrix3x4* matrix)
+void Acceleration::UpData(void)
 {
 	list.lock()->Barrier(Result());
 
-	for (size_t i = 0; i < instanceNum; ++i)
+	for (size_t i = 0; i < bottom.size(); ++i)
 	{
-		std::memcpy(buf[i].Transform, matrix[i].mat, sizeof(Matrix3x4));
+		for (size_t n = 0; n < bottom[i]->prim.lock()->InstanceNum(); ++n)
+		{
+			size_t index = i * bottom.size() + n;
+			std::memcpy(buf[index].Transform, prim.lock()->Matrix(n).mat, sizeof(Matrix3x4));
+		}
 	}
 
 	D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC desc{};
