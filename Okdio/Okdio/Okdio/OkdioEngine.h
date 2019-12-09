@@ -8,7 +8,7 @@
 #include <thread>
 
 struct IMMDevice;
-struct IAudioClient;
+struct IAudioClient3;
 struct IAudioRenderClient;
 class Okdio;
 
@@ -70,7 +70,7 @@ private:
 	Microsoft::WRL::ComPtr<IMMDevice>dev;
 
 	// オーディオクライアント
-	Microsoft::WRL::ComPtr<IAudioClient>audio;
+	Microsoft::WRL::ComPtr<IAudioClient3>audio;
 
 	// オーディオレンダラー
 	Microsoft::WRL::ComPtr<IAudioRenderClient>render;
