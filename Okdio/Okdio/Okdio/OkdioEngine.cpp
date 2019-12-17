@@ -238,6 +238,7 @@ void OkdioEngine::Stream(void)
 
 	unsigned __int32 padding = 0;
 	unsigned char* buf = nullptr;
+
 	while (true)
 	{
 		hr = WaitForMultipleObjects(handle.size(), handle.data(), false, INFINITE);

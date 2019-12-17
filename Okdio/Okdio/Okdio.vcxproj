@@ -148,6 +148,7 @@
     <ClCompile Include="Okdio\Okdio.cpp" />
     <ClCompile Include="Okdio\OkdioEngine.cpp" />
     <ClCompile Include="Okdio\OkdioList\OkdioList.cpp" />
+    <ClCompile Include="Okdio\ReSample\ReSample.cpp" />
     <ClCompile Include="Okdio\SoundBuffer\SoundBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +161,7 @@
     <ClInclude Include="Okdio\Okdio.h" />
     <ClInclude Include="Okdio\OkdioEngine.h" />
     <ClInclude Include="Okdio\OkdioList\OkdioList.h" />
+    <ClInclude Include="Okdio\ReSample\ReSample.h" />
     <ClInclude Include="Okdio\SoundBuffer\SoundBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

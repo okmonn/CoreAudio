@@ -18,6 +18,9 @@ namespace okmonn
 	// オーディオデバイス情報取得
 	std::vector<AudioDevProp> GetAudioDevProp(const AudioDevType& type);
 
+	// リサンプル
+	std::vector<float>ReSample(const std::vector<float>& data, const okmonn::SoundInfo& inputInfo, const okmonn::SoundInfo& outputInfo);
+
 	// 階乗
 	unsigned int Factorial(const unsigned int& val);
 

@@ -3,6 +3,8 @@
 #include "SoundBuffer/SoundBuffer.h"
 #include "OkdioList/OkdioList.h"
 
+#include "ReSample/ReSample.h"
+
 // サウンドキュー最大数
 #define QUEUE_MAX 2
 
@@ -11,11 +13,15 @@ Okdio::Okdio(const std::string& fileName) :
 	read(0), play(false), loop(false), finish(false)
 {
 	Load(fileName);
+
+	ReSample::Get().Start();
 }
 
 // デストラクタ
 Okdio::~Okdio()
 {
+	ReSample::Get().Finish();
+
 	OkdioList::Get().DeleteList(this);
 }
 
@@ -50,11 +56,14 @@ void Okdio::Submit(const size_t& num)
 	if (play == true)
 	{
 		std::weak_ptr<std::vector<float>>wave = Loader::Get().GetWave(name);
-		size_t size = num;
+		size_t size = num * (float(info.sample) / 48000.0f);
 		if (read + size > wave.lock()->size())
 		{
 			size = (read + size) - wave.lock()->size();
-			SoundBuffer::Get().Submit(std::vector<float>(&wave.lock()->at(read), &wave.lock()->at(read + size)));
+
+			auto tmp = ReSample::Get().Convert(std::vector<float>(&wave.lock()->at(read), &wave.lock()->at(read + size)), info, okmonn::SoundInfo(48000, 32, 2));
+
+			SoundBuffer::Get().Submit(tmp);
 			if (loop == false)
 			{
 				Stop();
@@ -65,7 +74,9 @@ void Okdio::Submit(const size_t& num)
 		}
 		else
 		{
-			SoundBuffer::Get().Submit(std::vector<float>(&wave.lock()->at(read), &wave.lock()->at(read + size)));
+			auto tmp = ReSample::Get().Convert(std::vector<float>(&wave.lock()->at(read), &wave.lock()->at(read + size)), info, okmonn::SoundInfo(48000, 32, 2));
+
+			SoundBuffer::Get().Submit(tmp);
 			read += size;
 		}
 	}
