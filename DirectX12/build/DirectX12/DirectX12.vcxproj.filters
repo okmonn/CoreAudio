@@ -1,0 +1,269 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Window">
+      <UniqueIdentifier>{c1459cb7-d66c-425f-9831-2f3f61954e91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Device">
+      <UniqueIdentifier>{9015a345-aca2-4d35-9444-c3c551b64cb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandAllocator">
+      <UniqueIdentifier>{f43a564d-27a1-4162-840b-a3a88e125e46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandQueue">
+      <UniqueIdentifier>{4aeae3af-66d1-441b-bf5c-2b756056622e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommandList">
+      <UniqueIdentifier>{a5cf2744-6f7f-47ac-9e9f-05a96f772455}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fence">
+      <UniqueIdentifier>{93060876-92d6-43cd-96d0-b5470fbe547e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SwapChain">
+      <UniqueIdentifier>{41d1fcc2-dc34-4903-aecc-a41ce17829c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderTarget">
+      <UniqueIdentifier>{9b9ccf82-e553-4e18-ba7e-9ac3bc0ec1fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DescriptorHeap">
+      <UniqueIdentifier>{8be2b067-4f78-4e8b-a051-cf2852907fa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShaderLoader">
+      <UniqueIdentifier>{5417c3a0-7fc0-4cf4-ab4b-74ae4a2066f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader">
+      <UniqueIdentifier>{d93ac14a-cd59-41bc-80a6-da4e52defecc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RootSignature">
+      <UniqueIdentifier>{3b79b6cf-06fe-4211-8665-719b6e4ba92c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pipeline">
+      <UniqueIdentifier>{84483d21-3ac9-407e-9238-9fffe2c02231}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VertexBuffer">
+      <UniqueIdentifier>{11c3c4a9-40ce-4761-8fbf-96e0810892ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ConstantBuffer">
+      <UniqueIdentifier>{73ca2207-e3aa-47a7-9dff-9cc62b8d9e19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IndexBuffer">
+      <UniqueIdentifier>{a703bb8a-6d59-483d-a41d-b36ace754935}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ResourceBuffer">
+      <UniqueIdentifier>{d1dec1ae-c7bf-4446-8a71-ddae9d3e3c66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DepthStencil">
+      <UniqueIdentifier>{818589a4-35cc-4f81-b571-65f226d40288}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\Primitive">
+      <UniqueIdentifier>{2680c21f-fb32-45e4-9476-0064858a7d05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\Primitive\2D">
+      <UniqueIdentifier>{790918b7-dce5-40ed-b791-6113d305a3de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\Primitive\3D">
+      <UniqueIdentifier>{13639e59-f5a3-4795-af30-bdc9c9060b3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\Texture">
+      <UniqueIdentifier>{2cc72acd-29a4-4dff-86ea-c7e69f0426b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\Texture\2D">
+      <UniqueIdentifier>{8c31508a-dd14-4a22-bf00-b4434169eb81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\Texture\3D">
+      <UniqueIdentifier>{e2a87afa-1d8b-4ed8-bc18-7e9cf806cf17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\Shader\Model">
+      <UniqueIdentifier>{8edda879-f3c1-4b45-ace6-2f86299e4420}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Window.cpp">
+      <Filter>Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Device.cpp">
+      <Filter>Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CommandAllocator.cpp">
+      <Filter>CommandAllocator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CommandQueue.cpp">
+      <Filter>CommandQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CommandList.cpp">
+      <Filter>CommandList</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Fence.cpp">
+      <Filter>Fence</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\SwapChain.cpp">
+      <Filter>SwapChain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DescriptorHeap.cpp">
+      <Filter>DescriptorHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RenderTarget.cpp">
+      <Filter>RenderTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ShaderLoader.cpp">
+      <Filter>ShaderLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RootSignature.cpp">
+      <Filter>RootSignature</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Pipeline.cpp">
+      <Filter>Pipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\VertexBuffer.cpp">
+      <Filter>VertexBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ConstantBuffer.cpp">
+      <Filter>ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\IndexBuffer.cpp">
+      <Filter>IndexBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ResourceBuffer.cpp">
+      <Filter>ResourceBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\DepthStencil.cpp">
+      <Filter>DepthStencil</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\ComPtr.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Window.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\resource.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\BaseClass.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Device.h">
+      <Filter>Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\CommandAllocator.h">
+      <Filter>CommandAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\CommandQueue.h">
+      <Filter>CommandQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\CommandList.h">
+      <Filter>CommandList</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Fence.h">
+      <Filter>Fence</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\SwapChain.h">
+      <Filter>SwapChain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\RenderTarget.h">
+      <Filter>RenderTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\DescriptorHeap.h">
+      <Filter>DescriptorHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ShaderLoader.h">
+      <Filter>ShaderLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\RootSignature.h">
+      <Filter>RootSignature</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Pipeline.h">
+      <Filter>Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\VertexBuffer.h">
+      <Filter>VertexBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ConstantBuffer.h">
+      <Filter>ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\IndexBuffer.h">
+      <Filter>IndexBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ResourceBuffer.h">
+      <Filter>ResourceBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\DepthStencil.h">
+      <Filter>DepthStencil</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DirectX12.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\rsc\MyLogo.ico">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\shader\Primitive2D.hlsli">
+      <Filter>リソース ファイル\Shader\Primitive\2D</Filter>
+    </None>
+    <None Include="..\..\shader\Primitive3D.hlsli">
+      <Filter>リソース ファイル\Shader\Primitive\3D</Filter>
+    </None>
+    <None Include="..\..\shader\Texture2D.hlsli">
+      <Filter>リソース ファイル\Shader\Texture\2D</Filter>
+    </None>
+    <None Include="..\..\shader\Texture3D.hlsli">
+      <Filter>リソース ファイル\Shader\Texture\3D</Filter>
+    </None>
+    <None Include="..\..\shader\Model.hlsli">
+      <Filter>リソース ファイル\Shader\Model</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\shader\PrimitivePixel2D.hlsl">
+      <Filter>リソース ファイル\Shader\Primitive\2D</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\shader\PrimitiveVertex2D.hlsl">
+      <Filter>リソース ファイル\Shader\Primitive\2D</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\shader\PrimitivePixel3D.hlsl">
+      <Filter>リソース ファイル\Shader\Primitive\3D</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\shader\PrimitiveVertex3D.hlsl">
+      <Filter>リソース ファイル\Shader\Primitive\3D</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\shader\TexturePixel2D.hlsl">
+      <Filter>リソース ファイル\Shader\Texture\2D</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\shader\TextureVertex2D.hlsl">
+      <Filter>リソース ファイル\Shader\Texture\2D</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\shader\TexturePixel3D.hlsl">
+      <Filter>リソース ファイル\Shader\Texture\3D</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\shader\TextureVertex3D.hlsl">
+      <Filter>リソース ファイル\Shader\Texture\3D</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\shader\ModelVertex.hlsl">
+      <Filter>リソース ファイル\Shader\Model</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\shader\ModelPixel.hlsl">
+      <Filter>リソース ファイル\Shader\Model</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
